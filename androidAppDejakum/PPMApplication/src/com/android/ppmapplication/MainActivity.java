@@ -394,7 +394,7 @@ public class MainActivity extends Activity {
 		 				null,
 		 				ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?", 
 		 				new String[]{id}, null); 
-		 			while (emailCur.moveToNext()) { 
+		 		while (emailCur.moveToNext()) { 
 		 			    // This would allow you get several email addresses
 		 		        // if the email addresses were stored in an array
 		 			    String email = emailCur.getString(
@@ -425,9 +425,9 @@ public class MainActivity extends Activity {
 		 	        	if (noteCur.moveToFirst()) { 
 		 	        	    String note = noteCur.getString(noteCur.getColumnIndex(ContactsContract.CommonDataKinds.Note.NOTE));
 		 	        
-		 	        	    valueElement = document.createElement("note");
+		 	        	    /*valueElement = document.createElement("note");
 						    valueElement.setAttribute("value", note);
-						    document.getElementsByTagName("contact").item(index).appendChild(valueElement);
+						    document.getElementsByTagName("contact").item(index).appendChild(valueElement);*/
 		 	        	    
 		 	        	} 
 		 	        	noteCur.close();
@@ -443,9 +443,9 @@ public class MainActivity extends Activity {
 		 	       		String poBox = addrCur.getString(
 		 	                            addrCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.POBOX));
 		 	       		
-		 	       		valueElement = document.createElement("poBox");
+		 	       		/*valueElement = document.createElement("poBox");
 		 	       		valueElement.setAttribute("value", poBox);
-		 	       		document.getElementsByTagName("contact").item(index).appendChild(valueElement);
+		 	       		document.getElementsByTagName("contact").item(index).appendChild(valueElement);*/
 		 	       		
 		 	        		String street = addrCur.getString(
 		 	                            addrCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.STREET));
@@ -466,6 +466,7 @@ public class MainActivity extends Activity {
 		 	        	} 
 		 	        	addrCur.close();
 		 	      //INSTANT MESSAGE
+		 	        	
 		 	        	String imWhere = ContactsContract.Data.CONTACT_ID + " = ? AND " + ContactsContract.Data.MIMETYPE + " = ?"; 
 		 	        	String[] imWhereParams = new String[]{id, 
 		 	        	ContactsContract.CommonDataKinds.Im.CONTENT_ITEM_TYPE}; 
@@ -476,9 +477,9 @@ public class MainActivity extends Activity {
 		 	        	    String imType;
 		 	        	    imType = imCur.getString(imCur.getColumnIndex(ContactsContract.CommonDataKinds.Im.TYPE));
 		 	        	    
-		 	        	    valueElement = document.createElement("imType");
+		 	        	    /*valueElement = document.createElement("imType");
 						    valueElement.setAttribute("value", imType);
-						    document.getElementsByTagName("contact").item(index).appendChild(valueElement);
+						    document.getElementsByTagName("contact").item(index).appendChild(valueElement);*/
 		 	        	
 		 	        	} 
 		 	        	imCur.close();
