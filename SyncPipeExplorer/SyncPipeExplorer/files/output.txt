@@ -1,0 +1,4 @@
+Microsoft Windows [Version 6.1.7601]
+Copyright (c) 2009 Microsoft Corporation. Alle Rechte vorbehalten.
+
+M:\Dropbox\PPM\5\SyncPipeExplorer\SyncPipeExplorer>cd M:/Dropbox/Diplomarbeit_Dejakum_Ortner/Code/Code_Desktop/ADB/adb.exe

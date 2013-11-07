@@ -1,0 +1,7 @@
+1383548513567	Rename field 'topNode'
+1383555667865	Rename method 'doSomething'
+1383725527529	Delete element
+1383726384449	Delete element
+1383728506146	Move compilation unit
+1383741756015	Rename local variable 'treeNode'
+1383741791662	Rename local variable 'n'

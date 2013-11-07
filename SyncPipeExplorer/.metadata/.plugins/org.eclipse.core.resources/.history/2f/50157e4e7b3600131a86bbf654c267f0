@@ -1,0 +1,79 @@
+package aut.htlinn.ortner.spe;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+
+public class AndroidFilesHandler {
+
+	public void getAndroidFiles(){
+		ArrayList<String> commands = new ArrayList<String>();
+		ProcessBuilder pb = new ProcessBuilder (commands);
+		Process p;
+		ArrayList<String> dirs = new ArrayList<String>();
+		try {
+			// start app
+			System.out.println("Requesting Files...");
+			commands.add ("D:/Dropbox/Diplomarbeit_Dejakum_Ortner/Code/Code_Desktop/ADB/adb.exe"); // command name
+//			commands.add("adb pull /sdcard");
+//			commands.add ("am start -a android.intent.action.START -n com.testapplication/.activity.StartActivity");
+			commands.add("shell");
+			commands.add("ls");
+			
+			pb = new ProcessBuilder (commands);
+			pb.redirectErrorStream();
+			pb.redirectInput(new File("output.txt"));
+			p = pb.start();
+			p.waitFor();
+			InputStream is = p.getInputStream();
+		       InputStreamReader isr = new InputStreamReader(is);
+		       BufferedReader br = new BufferedReader(isr);
+		       String line;
+
+		       System.out.println("output: ");
+				while ((line = br.readLine()) != null) {
+					System.out.println(line);
+					dirs.add(line);
+				}
+				
+				
+				OutputStream oStream = p.getOutputStream();
+				OutputStreamWriter oWriter = new OutputStreamWriter(oStream);
+				BufferedWriter commander = new BufferedWriter(oWriter);
+
+//				commander.write("cd c:/");
+				commander.write("cmd, ls");
+				p= pb.start();
+				p.waitFor();
+				
+				
+				while ((line = br.readLine()) != null) {
+					System.out.println("nit null");
+					System.out.println(line);
+					dirs.add(line);
+				}
+				
+				
+//				for(String dir:dirs){
+//					System.out.println("in for");
+//					commander.write("cd "+dir);
+//					commander.write("ls");
+//					while ((line = br.readLine()) != null) {
+//						System.out.println("lines");
+//						System.out.println(line);
+//					}
+//				}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		System.out.println("Fertig");
+	}
+}

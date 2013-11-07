@@ -1,0 +1,67 @@
+package aut.htlinn.ortner.spe;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
+
+public class AndroidFilesHandler {
+
+	public void getAndroidFiles(){
+		ArrayList<String> commands = new ArrayList<String>();
+		ProcessBuilder pb;
+		Process p;
+		ArrayList<String> dirs = new ArrayList<String>();
+		try {
+			
+			System.out.println("Requesting Files...");
+			pb = new ProcessBuilder("cmd.exe");
+			p = pb.start();
+			BufferedWriter p_stdin = new BufferedWriter(new OutputStreamWriter(p.getOutputStream()));
+			Scanner s = new Scanner(p.getInputStream());
+		  
+			InputStream is = p.getInputStream();
+		    InputStreamReader isr = new InputStreamReader(is);
+		    BufferedReader br = new BufferedReader(isr);
+		    String line;
+		    
+			 p_stdin.write("cd M:/Dropbox/Diplomarbeit_Dejakum_Ortner/Code/Code_Desktop/ADB/adb.exe\n");
+			 p_stdin.flush();
+			 p_stdin.write("adb shell\n");
+			 p_stdin.flush();
+			 
+			 p_stdin.write("ls\n");
+			 Thread.sleep(1000);
+			 while ((line = br.readLine()) != null) {
+				 System.out.println(line);
+					if(line.equals("")){
+						break;
+					}
+					System.out.println("schleife");
+				}
+			 p_stdin.flush();
+			
+			 
+			 //s.skip("shell@android");
+		       System.out.println("output: ");
+				while ((line = br.readLine()) != null) {
+					System.out.println(line);
+				}
+		       s.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("Fertig");
+	}
+}

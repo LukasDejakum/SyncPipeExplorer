@@ -1,0 +1,24 @@
+package aut.htlinn.ortner.spe.gui;
+
+import java.io.File;
+
+import javax.swing.JTable;
+
+public class FileTable {
+
+	private JTable table = new JTable();
+	
+	//Pfad aus dem JTree übergeben und in XML Datei suchen, liste (String) übergeben
+	public FileTable(String[] files){
+		//symbol, name, dir or file, size, date
+
+		Object[][] data = new Object[files.length][4];
+		String[] columnNames = {"Name", "Art", "Groesse","Datum"};
+		for(String file:files){
+			
+		}
+	}
+	public void update(){
+		
+	}
+}

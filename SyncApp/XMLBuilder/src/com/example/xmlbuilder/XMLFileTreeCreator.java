@@ -1,0 +1,105 @@
+package com.example.xmlbuilder;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Properties;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import android.os.Environment;
+
+public class XMLFileTreeCreator implements Runnable{
+
+	private Document document;
+    private Element actualElement;
+    private SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+    private File xmlFile;
+    
+    public XMLFileTreeCreator(File xmlFile){
+ 		this.xmlFile=xmlFile;
+    }
+	private void showDirs(File dir, Element above){
+	    	if(dir.listFiles()!=null){
+		        for(File f:dir.listFiles()){
+		            if(f.isDirectory()){
+		            	actualElement=document.createElement("d");
+		            	actualElement.setAttribute("name", f.getName());
+		            	actualElement.setAttribute("size", ""+f.length());
+		            	actualElement.setAttribute("date", sdf.format(f.lastModified()));
+		            	above.appendChild(actualElement);
+		                showDirs(f, actualElement);
+		            }
+		            else{
+		            	actualElement=document.createElement("f");
+		            	actualElement.setAttribute("name", f.getName());
+		            	actualElement.setAttribute("size", ""+f.length());
+		            	actualElement.setAttribute("date", sdf.format(f.lastModified()));
+		            	above.appendChild(actualElement);
+		            }
+		        }
+	    	}
+	 }
+	@Override
+	public void run() {
+
+		if(xmlFile.exists()){
+ 			xmlFile.delete();
+ 		}
+ 		
+ 		try {
+ 	        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+ 	            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+ 	            document = documentBuilder.newDocument();
+
+ 	            String[] rootDirParts = Environment.getExternalStorageDirectory().getAbsolutePath().split("/");
+ 	            Element rootElement = document.createElement(rootDirParts[rootDirParts.length-1]);
+ 	            rootElement.setAttribute("type", "d");
+ 	            document.appendChild(rootElement);
+
+ 	            showDirs(new File(Environment.getExternalStorageDirectory().getAbsolutePath()), rootElement);
+
+ 	            TransformerFactory factory = TransformerFactory.newInstance();
+ 	            Transformer transformer = factory.newTransformer();
+ 	            Properties outFormat = new Properties();
+ 	            outFormat.setProperty(OutputKeys.INDENT, "yes");
+ 	            outFormat.setProperty(OutputKeys.METHOD, "xml");
+ 	            outFormat.setProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+ 	            outFormat.setProperty(OutputKeys.VERSION, "1.0");
+ 	            outFormat.setProperty(OutputKeys.ENCODING, "UTF-8");
+ 	            transformer.setOutputProperties(outFormat);
+ 	            DOMSource domSource = 
+ 	            new DOMSource(document.getDocumentElement());
+ 	            OutputStream output = new ByteArrayOutputStream();
+ 	            StreamResult result = new StreamResult(output);
+ 	            transformer.transform(domSource, result);
+ 	            String xmlString = output.toString();
+ 	            
+ 	            FileWriter writer = new FileWriter(xmlFile,true);
+ 				writer.write(xmlString);
+ 				writer.flush();
+ 				writer.close();
+ 	            
+ 	        } catch (ParserConfigurationException e) {
+ 	        } catch (TransformerConfigurationException e) {
+ 	        } catch (TransformerException e) {
+ 	        } catch (IOException e) {
+ 				e.printStackTrace();
+ 			}
+	}
+}

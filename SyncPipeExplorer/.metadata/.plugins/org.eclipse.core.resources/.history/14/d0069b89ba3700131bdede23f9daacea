@@ -1,0 +1,15 @@
+package aut.htlinn.ortner.spe;
+import java.io.*;
+import java.util.*;
+
+public class Main {
+	    public static void main(String[] args) {  
+	        Runtime rt = Runtime.getRuntime();
+	        try {
+				rt.exec("cmd && D:/Dropbox/Diplomarbeit_Dejakum_Ortner/Code/Code_Desktop/ADB/adb.exe");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	    }  
+}
