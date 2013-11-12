@@ -65,6 +65,7 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		
 		String stringToWrite = "test\n1,2\n";  
+		
 		SensorManager mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
 		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 	    NetworkInfo Info = cm.getActiveNetworkInfo();
@@ -73,19 +74,6 @@ public class MainActivity extends Activity {
 	    
 	    File dir = new File("/storage/sdcard0");
 		File newfile = new File(dir,File.separator + "test.xml");
-		
-		//STRING
-		if(newfile.exists()){
-			newfile.delete();
-		}
-		try {
-			newfile.createNewFile();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		//XML
-		newfile = new File(dir,File.separator + "test2.xml");
 		if(newfile.exists()){
 			newfile.delete();
 		}
@@ -103,62 +91,22 @@ public class MainActivity extends Activity {
 			documentBuilder = documentBuilderFactory.newDocumentBuilder();
 			Document document = documentBuilder.newDocument();
 			
-			Element rootElement = document.createElement("contactlist");
-            //rootElement.setAttribute("publisher", "Oracle Publishing");
+			Element rootElement = document.createElement("smartphoneinformations");
             document.appendChild(rootElement);
+            
+            Element internetSignalElement = document.createElement("wifisignal");
+            rootElement.appendChild(internetSignalElement);
+            
+            Element mobileSignalElement = document.createElement("mobilesignal");
+            rootElement.appendChild(mobileSignalElement);
+            
+            Element contactListElement = document.createElement("contactlist");
+            rootElement.appendChild(contactListElement);
             Element contactElement;
+            
+            
             Element valueElement;     
             
-         
-			
-		
-	 // Ausschreiben der Datei
-	    /*try {
-			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document doc = builder.newDocument();
-	
-		    try {
-				doc = builder.parse(new File("/storage/sdcard0/test2.xml"));
-				
-				
-			 
-		        OutputFormat format = new OutputFormat(doc); 
-		        format.setEncoding(”UTF−8”);
-		        format.setIndenting(true);
-		        format.setIndent(2);
-		        format.setLineWidth(75);
-		        format.setPreserveSpace(false );
-		        FileOutputStream fos = new FileOutputStream(”/storage/sdcard0/test2.xml”); 
-		        XMLSerializer output = new XMLSerializer(fos,format);
-		        output.serialize(doc);
-		        fos.close();
-		        
-			} catch (SAXException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		} catch (ParserConfigurationException e1) {
-			e1.printStackTrace();
-		}
-	    */
-	    
-	    
-	    
-	   // BEISPIEL: Erzeugen der Elemente und Erstellung des Teilbaums 
-	   /* Element event = doc . createElement ( ”event ”);
-	    Element place = doc . createElement ( ”place ”);
-	    place . setAttribute ( ”name”, ”Arena Leipzig ”);
-	    Element address = doc . createElement ( ”address ”); address.appendChild(doc.createTextNode(”Am Sportforum , 04105 Leipzig”)); place . appendChild ( address );
-	    event . appendChild ( place );
-	    Element date = doc . createElement ( ”date ”); date. setAttribute(”day”,”13”);
-	    d a t e . s e t A t t r i b u t e ( ”month ” , ”2 ” ) ;
-	    date . setAttribute ( ”year ”, ”2005 ”);
-	    date. setAttribute(”hour”,”20”);
-	    date . setAttribute ( ”minute ”, ”0”);
-	    event . appendChild(date );*/
-	    
-	    
 	    
 	    List<Sensor> sensorList = mSensorManager.getSensorList(Sensor.TYPE_ALL);
 
@@ -179,7 +127,14 @@ public class MainActivity extends Activity {
 	    
 	    
 	    if (Info == null || !Info.isConnectedOrConnecting()) {
-        	stringToWrite=stringToWrite+"No connection at all";
+        	valueElement = document.createElement("wificonnection");
+		    valueElement.setAttribute("value", "noWifiConnection");
+		    document.getElementsByTagName("wifisignal").item(0).appendChild(valueElement);
+		    
+		    valueElement = document.createElement("mobileconnection");
+		    valueElement.setAttribute("value", "no3GConnection");
+		    document.getElementsByTagName("mobilesignal").item(0).appendChild(valueElement);
+		    
 	        Log.i(TAG, "No connection");
 	    }
 	    else{
@@ -187,18 +142,36 @@ public class MainActivity extends Activity {
 	         int netSubtype = Info.getSubtype();
 
 	        if (netType == ConnectivityManager.TYPE_WIFI) {
+	        	
 	            Log.i(TAG, "Wifi connection");
-	            stringToWrite=stringToWrite+"CONNECTED VIA WIFI\n";
+	           
+	            valueElement = document.createElement("wificonnection");
+			    valueElement.setAttribute("value", "wifiConnection");
+			    document.getElementsByTagName("wifisignal").item(0).appendChild(valueElement);
+			    
+			    valueElement = document.createElement("mobileconnection");
+			    valueElement.setAttribute("value", "GPRS/3G connection");
+			    document.getElementsByTagName("mobilesignal").item(0).appendChild(valueElement);
+	            
 	            WifiManager wifiManager = (WifiManager) getApplication().getSystemService(Context.WIFI_SERVICE);
 	            List<ScanResult> scanResult = wifiManager.getScanResults();
 	            for (int i = 0; i < scanResult.size(); i++) {
-	            	stringToWrite=stringToWrite+"scanResult"+"Speed of wifi"+scanResult.get(i).level+"\n";
+	            	
 	                Log.d("scanResult", "Speed of wifi"+scanResult.get(i).level);//The db level of signal 
+	            
 	            }
 	        } 
 	        else if (netType == ConnectivityManager.TYPE_MOBILE) {
 	        	stringToWrite=stringToWrite+"GPRS/3G connection avaliable\nThe phone supports following NETWORK TYPES:\n\n";
-	            Log.i(TAG, "GPRS/3G connection");
+	            
+	            valueElement = document.createElement("wificonnection");
+			    valueElement.setAttribute("value", "noWifiConnection");
+			    document.getElementsByTagName("wifisignal").item(0).appendChild(valueElement);
+	        
+			    
+			    
+			    
+			    
 	            // Need to get differentiate between 3G/GPRS
 	            
 	            switch (netSubtype) {
@@ -252,6 +225,7 @@ public class MainActivity extends Activity {
 	    
 	    
 	 //nur JeallyBean
+	    
 	 /*   
 	    TelephonyManager telephonyManager = (TelephonyManager)this.getSystemService(Context.TELEPHONY_SERVICE);
 	 // for example value of first element
@@ -259,6 +233,7 @@ public class MainActivity extends Activity {
 	 CellSignalStrengthGsm cellSignalStrengthGsm = cellinfogsm.getCellSignalStrength();
 	 cellSignalStrengthGsm.getDbm();	
 	  */
+	    
 	 /*
 	    int strengthAmplitude = MyPhoneStateListener.getStrength();
 	    
@@ -302,6 +277,7 @@ public class MainActivity extends Activity {
 	    
 	    
 	    //nur Galaxy S4
+	    
 	    /*Sensor TemperatureSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_TEMPERATURE);
 	     if(TemperatureSensor != null){
 		        Log.i(TAG, "Sensor.TYPE_TEMPERATURE Available");
@@ -326,10 +302,10 @@ public class MainActivity extends Activity {
 		        Log.i(TAG, "Sensor.TYPE_AMBIENT_TEMPERATURE NOT Available");
 	     }*/
 	    
-	    
-	    
-	    
+	
 	    //CONTACTS
+	    
+	    
 	    ContentResolver cr = getContentResolver();
         Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
                 null, null, null, null);
@@ -337,6 +313,7 @@ public class MainActivity extends Activity {
         int index=0;
         
         //NAMES
+        
         if (cur.getCount() > 0) {
         	
         	
@@ -347,7 +324,7 @@ public class MainActivity extends Activity {
 	        	
 			    contactElement= document.createElement("contact");
   	        	contactElement.setAttribute("index", id);
-  	        	rootElement.appendChild(contactElement);
+  	        	contactListElement.appendChild(contactElement);
 			    
 			    valueElement = document.createElement("surename");
 			    valueElement.setAttribute("value", name);
@@ -407,9 +384,9 @@ public class MainActivity extends Activity {
 		 		 	    String emailType = emailCur.getString(
 		 		                      emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.TYPE));
 		 		 	    
-		 		 	    valueElement = document.createElement("eMailTyp");
+		 		 	   /* valueElement = document.createElement("eMailTyp");
 					    valueElement.setAttribute("value", emailType);
-					    document.getElementsByTagName("contact").item(index).appendChild(valueElement);
+					    document.getElementsByTagName("contact").item(index).appendChild(valueElement);*/
 		 		 	    
 		 		 	    Log.i(TAG, email);
 		 		 	} 
@@ -465,6 +442,7 @@ public class MainActivity extends Activity {
 
 		 	        	} 
 		 	        	addrCur.close();
+		 	        	
 		 	      //INSTANT MESSAGE
 		 	        	
 		 	        	String imWhere = ContactsContract.Data.CONTACT_ID + " = ? AND " + ContactsContract.Data.MIMETYPE + " = ?"; 
@@ -487,14 +465,7 @@ public class MainActivity extends Activity {
 	        }
 		    
         }
-        
-        
-        
-        
-        
-        
-        
-        
+          
         try {
             
 			TransformerFactory factory = TransformerFactory.newInstance();
@@ -526,53 +497,34 @@ public class MainActivity extends Activity {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			 
 	        
-	
-   
-	    
-	    
-	     
-        	File dir2 = new File("/storage/sdcard0");
-			File newfile2 = new File(dir2,File.separator + "testString.xml");
-			
-			if(newfile2.exists()){
-
-				newfile2.delete();
-				try {
-					newfile2.createNewFile();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			
-			try {
-				FileWriter writer = new FileWriter(newfile2,true);
-				
-				writer.write(stringToWrite);
-				
-				writer.flush();
-				writer.close();
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+	        
+		    DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+		    DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+		    try {
+				document = docBuilder.parse(new File("files/test.xml"));
+			} catch (SAXException e) {
+				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			
-			 
-		    	DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-		    	DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-		    	try {
-					document = docBuilder.parse(new File("files/test.xml"));
-				} catch (SAXException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 		    	
-		    	
-		    	
-		
-		    	//doSomething((Node)document.getDocumentElement());
+		    
+		    
+		    
+		    
+		    
+		    //doSomething((Node)document.getDocumentElement());
 		    	
 		    	
 		    	
@@ -698,7 +650,7 @@ public class MainActivity extends Activity {
 	
 	private static void doSomething(Node node) {
 		// do something with the current node instead of System.out
-		Log.i(TAG,((Element)node).getAttribute("catalog"));
+		Log.i(TAG,((Element)node).getAttribute("contactlist"));
 		/*NodeList nodeList = node.getChildNodes();
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			Node currentNode = (Node) nodeList.item(i);
