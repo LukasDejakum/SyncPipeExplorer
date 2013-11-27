@@ -2,17 +2,16 @@ package com.android.ppmapplication;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Properties;
 
+import javax.security.auth.PrivateCredentialPermission;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.soap.Node;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
@@ -20,38 +19,38 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
+import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
 
-import android.media.MediaRecorder.OutputFormat;
+import android.R.integer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
+import android.os.BatteryManager;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.Contacts;
 import android.provider.ContactsContract;
-import android.R.integer;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
-import android.content.res.XmlResourceParser;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorListener;
 import android.hardware.SensorManager;
-import android.telephony.CellInfoGsm;
-import android.telephony.CellSignalStrengthGsm;
-import android.telephony.PhoneStateListener;
-import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
-import android.text.StaticLayout;
 import android.util.Log;
 import android.view.Menu;
 
@@ -59,10 +58,16 @@ import android.view.Menu;
 public class MainActivity extends Activity {
 	
 	private static final String TAG = "MainActivity";
+	private int batteryLevel;
 	 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		this.registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+		
+		String contactsFileNameString = "contacts.xml";
+		String propertiesFileNameString = "properties.xml";
 		
 		String stringToWrite = "test\n1,2\n";  
 		
@@ -70,28 +75,27 @@ public class MainActivity extends Activity {
 		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 	    NetworkInfo Info = cm.getActiveNetworkInfo();
 	    
-
-	    
-	    File dir = new File("/storage/sdcard0");
-		File newfile = new File(dir,File.separator + "test.xml");
+	    File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath());
+		File newfile = new File(dir, File.separator + contactsFileNameString);
 		if(newfile.exists()){
 			newfile.delete();
 		}
+		
 		try {
 			newfile.createNewFile();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
-		
 		try {
+			
 			
 			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 	        DocumentBuilder documentBuilder;
 			documentBuilder = documentBuilderFactory.newDocumentBuilder();
 			Document document = documentBuilder.newDocument();
 			
-			Element rootElement = document.createElement("smartphoneinformations");
+            Element rootElement = document.createElement("doctype");
             document.appendChild(rootElement);
             
             Element internetSignalElement = document.createElement("wifisignal");
@@ -100,24 +104,15 @@ public class MainActivity extends Activity {
             Element mobileSignalElement = document.createElement("mobilesignal");
             rootElement.appendChild(mobileSignalElement);
             
-            Element contactListElement = document.createElement("contactlist");
-            rootElement.appendChild(contactListElement);
-            Element contactElement;
+            Element valueElement;  
             
-            
-            Element valueElement;     
-            
-	    
 	    List<Sensor> sensorList = mSensorManager.getSensorList(Sensor.TYPE_ALL);
 
 	    Log.w(TAG, "sl size = " + sensorList.size());
 	    for(int i=0;i<sensorList.size();i++) {
 	        Log.w(TAG, "sn = " + sensorList.get(i).getName());
 	    }
-	    
-	    
-	    
-	    
+
 	    
 	    
 	    
@@ -128,30 +123,35 @@ public class MainActivity extends Activity {
 	    
 	    if (Info == null || !Info.isConnectedOrConnecting()) {
         	valueElement = document.createElement("wificonnection");
-		    valueElement.setAttribute("value", "noWifiConnection");
-		    document.getElementsByTagName("wifisignal").item(0).appendChild(valueElement);
-		    
+        	internetSignalElement.appendChild(valueElement);
+		    valueElement.appendChild(document.createTextNode("noWifiConnection"));
+
 		    valueElement = document.createElement("mobileconnection");
-		    valueElement.setAttribute("value", "no3GConnection");
-		    document.getElementsByTagName("mobilesignal").item(0).appendChild(valueElement);
-		    
-	        Log.i(TAG, "No connection");
+		    mobileSignalElement.appendChild(valueElement);
+		    valueElement.appendChild(document.createTextNode("no3GConnection"));
+
 	    }
 	    else{
 	    	 int netType = Info.getType();
 	         int netSubtype = Info.getSubtype();
-
+	         
 	        if (netType == ConnectivityManager.TYPE_WIFI) {
 	        	
 	            Log.i(TAG, "Wifi connection");
 	           
 	            valueElement = document.createElement("wificonnection");
-			    valueElement.setAttribute("value", "wifiConnection");
-			    document.getElementsByTagName("wifisignal").item(0).appendChild(valueElement);
+	            internetSignalElement.appendChild(valueElement);
+			    valueElement.appendChild(document.createTextNode("wifiConnection"));
 			    
 			    valueElement = document.createElement("mobileconnection");
-			    valueElement.setAttribute("value", "GPRS/3G connection");
-			    document.getElementsByTagName("mobilesignal").item(0).appendChild(valueElement);
+			    mobileSignalElement.appendChild(valueElement);
+			    valueElement.appendChild(document.createTextNode("no3GConnection because wifi is connected"));
+	            
+//			    valueElement.setAttribute("value", "wifiConnection");
+//			    document.getElementsByTagName("wifisignal").item(0).appendChild(valueElement);
+			    
+//			    valueElement.setAttribute("value", "GPRS/3G connection");
+//			    document.getElementsByTagName("mobilesignal").item(0).appendChild(valueElement);
 	            
 	            WifiManager wifiManager = (WifiManager) getApplication().getSystemService(Context.WIFI_SERVICE);
 	            List<ScanResult> scanResult = wifiManager.getScanResults();
@@ -165,18 +165,27 @@ public class MainActivity extends Activity {
 	        	stringToWrite=stringToWrite+"GPRS/3G connection avaliable\nThe phone supports following NETWORK TYPES:\n\n";
 	            
 	            valueElement = document.createElement("wificonnection");
-			    valueElement.setAttribute("value", "noWifiConnection");
-			    document.getElementsByTagName("wifisignal").item(0).appendChild(valueElement);
+	            internetSignalElement.appendChild(valueElement);
+			    valueElement.appendChild(document.createTextNode("noWifiConnection"));
+			    
+			    valueElement = document.createElement("mobileconnection");
+			    mobileSignalElement.appendChild(valueElement);
+			    valueElement.appendChild(document.createTextNode("GPRS/3G connection"));
+			    
+//			    valueElement.setAttribute("value", "noWifiConnection");
+//			    document.getElementsByTagName("wifisignal").item(0).appendChild(valueElement);
 	        
-			    
-			    
-			    
 			    
 	            // Need to get differentiate between 3G/GPRS
 	            
 	            switch (netSubtype) {
 	            case TelephonyManager.NETWORK_TYPE_1xRTT:
-	                stringToWrite=stringToWrite+"NETWORK TYPE 1xRTT"; // ~ 50-100 kbps
+//	                stringToWrite=stringToWrite+"NETWORK TYPE 1xRTT"; // ~ 50-100 kbps
+	                
+	                valueElement = document.createElement("mobilesubtype");
+				    mobileSignalElement.appendChild(valueElement);
+				    valueElement.appendChild(document.createTextNode("NETWORK TYPE 1xRTT"));
+	                
 	            case TelephonyManager.NETWORK_TYPE_CDMA:
 	                stringToWrite=stringToWrite+"NETWORK TYPE CDMA (3G) Speed: 2 Mbps"; // ~ 14-64 kbps
 	            case TelephonyManager.NETWORK_TYPE_EDGE:
@@ -214,7 +223,11 @@ public class MainActivity extends Activity {
 	            case TelephonyManager.NETWORK_TYPE_IDEN:
 	                stringToWrite=stringToWrite+"NETWORK TYPE IDEN"; // ~25 kbps
 	            case TelephonyManager.NETWORK_TYPE_LTE:
-	                stringToWrite=stringToWrite+"NETWORK TYPE LTE (4G) Speed: 10+ Mbps"; // ~ 10+ Mbps
+	                
+	                valueElement = document.createElement("mobilesubtype");
+				    mobileSignalElement.appendChild(valueElement);
+				    valueElement.appendChild(document.createTextNode("NETWORK TYPE LTE (4G) Speed: 10+ Mbps"));
+	                
 	            }
 	        } else {
 	            stringToWrite=stringToWrite+"error";
@@ -303,14 +316,25 @@ public class MainActivity extends Activity {
 	     }*/
 	    
 	
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
 	    //CONTACTS
 	    
+	    Element contactListElement = document.createElement("contactlist");
+	    rootElement.appendChild(contactListElement);
+	    
+	     Element contactElement;
 	    
 	    ContentResolver cr = getContentResolver();
         Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
                 null, null, null, null);
-        
-        int index=0;
         
         //NAMES
         
@@ -320,6 +344,7 @@ public class MainActivity extends Activity {
 		    while (cur.moveToNext()) {
 			    String id = cur.getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
 			    String name = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+		        //String familyName = cur.getString(cur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME));
 			    String number;
 	        	
 			    contactElement= document.createElement("contact");
@@ -327,38 +352,28 @@ public class MainActivity extends Activity {
   	        	contactListElement.appendChild(contactElement);
 			    
 			    valueElement = document.createElement("surename");
-			    valueElement.setAttribute("value", name);
-			    document.getElementsByTagName("contact").item(index).appendChild(valueElement);
-			 
+			    //valueElement.setAttribute("value", name)
+			    contactElement.appendChild(valueElement);
+			    valueElement.appendChild(document.createTextNode(name));
+			    //document.getElementsByTagName("contact").item(index).appendChild(valueElement);
 			    
-		        Log.i(TAG, name);
-		        
-
-		 		if (Integer.parseInt(cur.getString(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
-		 		    //Query phone here.  Covered next
-		 	    }
-		 		
+			    /*
+			    valueElement = document.createElement("familyname");
+			    contactElement.appendChild(valueElement);
+			    valueElement.appendChild(document.createTextNode(familyName));
+			    */
+			    
 		 		//NUMBERS
 		 		
-		 		if (Integer.parseInt(cur.getString(
-		                cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
-		             Cursor pCur = cr.query(
-				    ContactsContract.CommonDataKinds.Phone.CONTENT_URI, 
-				    null, 
-				    ContactsContract.CommonDataKinds.Phone.CONTACT_ID +" = ?", 
-				    new String[]{id}, null);
+		 		if (Integer.parseInt(cur.getString(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
+		 				Cursor pCur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID +" = ?", new String[]{id}, null);
 			        while (pCur.moveToNext()) {
-				    // Do something with phones
 			        	
 			            number = pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-				        
 			           
 					    valueElement = document.createElement("number");
-					    valueElement.setAttribute("value", number);
-					    document.getElementsByTagName("contact").item(index).appendChild(valueElement);
-			            
-			            Log.i(TAG, number);
-
+					    contactElement.appendChild(valueElement);
+					    valueElement.appendChild(document.createTextNode(number));
 
 			        } 
 			        pCur.close();
@@ -378,23 +393,24 @@ public class MainActivity extends Activity {
 		 		                      emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
 		 			    
 		 			    valueElement = document.createElement("eMail");
-					    valueElement.setAttribute("value", email);
-					    document.getElementsByTagName("contact").item(index).appendChild(valueElement);
+					    contactElement.appendChild(valueElement);
+					    valueElement.appendChild(document.createTextNode(email));
 		 			    
+		 		 	   /*
 		 		 	    String emailType = emailCur.getString(
 		 		                      emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.TYPE));
 		 		 	    
-		 		 	   /* valueElement = document.createElement("eMailTyp");
+		 		 	    valueElement = document.createElement("eMailTyp");
 					    valueElement.setAttribute("value", emailType);
-					    document.getElementsByTagName("contact").item(index).appendChild(valueElement);*/
+					    document.getElementsByTagName("contact").item(index).appendChild(valueElement);
+					    */
 		 		 	    
-		 		 	    Log.i(TAG, email);
 		 		 	} 
 		 		 	emailCur.close();
 		 		 
 		 		 	
 		 		 //NOTES
-		 		 	
+		 		 /*	
 		 		 	String noteWhere = ContactsContract.Data.CONTACT_ID + " = ? AND " + ContactsContract.Data.MIMETYPE + " = ?"; 
 		 	        String[] noteWhereParams = new String[]{id, 
 		 	        		ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE}; 
@@ -402,13 +418,13 @@ public class MainActivity extends Activity {
 		 	        	if (noteCur.moveToFirst()) { 
 		 	        	    String note = noteCur.getString(noteCur.getColumnIndex(ContactsContract.CommonDataKinds.Note.NOTE));
 		 	        
-		 	        	    /*valueElement = document.createElement("note");
+		 	        	    valueElement = document.createElement("note");
 						    valueElement.setAttribute("value", note);
-						    document.getElementsByTagName("contact").item(index).appendChild(valueElement);*/
+						    document.getElementsByTagName("contact").item(index).appendChild(valueElement);
 		 	        	    
 		 	        	} 
 		 	        	noteCur.close();
-		 	        	
+		 	      */  	
 		 	     //ADDRESSE
 		 	        
 		 	        String addrWhere = ContactsContract.Data.CONTACT_ID + " = ? AND " + ContactsContract.Data.MIMETYPE + " = ?"; 
@@ -420,13 +436,14 @@ public class MainActivity extends Activity {
 		 	       		String poBox = addrCur.getString(
 		 	                            addrCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.POBOX));
 		 	       		
-		 	       		/*valueElement = document.createElement("poBox");
-		 	       		valueElement.setAttribute("value", poBox);
-		 	       		document.getElementsByTagName("contact").item(index).appendChild(valueElement);*/
-		 	       		
 		 	        		String street = addrCur.getString(
 		 	                            addrCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.STREET));
-		 	        		String city = addrCur.getString(
+		 	        		
+		 	        		valueElement = document.createElement("street");
+		 	        		contactElement.appendChild(valueElement);
+						    valueElement.appendChild(document.createTextNode(street));
+		 	        		
+		 	        		/*String city = addrCur.getString(
 		 	                            addrCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.CITY));
 		 	        		String state = addrCur.getString(
 		 	                            addrCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.REGION));
@@ -435,33 +452,32 @@ public class MainActivity extends Activity {
 		 	        		String country = addrCur.getString(
 		 	                            addrCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.COUNTRY));
 		 	        		String type = addrCur.getString(
-		 	                            addrCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.TYPE));
-			 		 	    Log.i(TAG, state);
-			 		 	    
-			 		 	    
-
+		 	                            addrCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.TYPE));*/
+			 		 	  
+		 	        	
 		 	        	} 
 		 	        	addrCur.close();
 		 	        	
 		 	      //INSTANT MESSAGE
-		 	        	
+		 	        /*	
 		 	        	String imWhere = ContactsContract.Data.CONTACT_ID + " = ? AND " + ContactsContract.Data.MIMETYPE + " = ?"; 
 		 	        	String[] imWhereParams = new String[]{id, 
 		 	        	ContactsContract.CommonDataKinds.Im.CONTENT_ITEM_TYPE}; 
 		 	        	Cursor imCur = cr.query(ContactsContract.Data.CONTENT_URI, 
 		 	                   null, imWhere, imWhereParams, null); 
 		 	        	if (imCur.moveToFirst()) { 
+		 	        		
 		 	        	    String imName = imCur.getString(imCur.getColumnIndex(ContactsContract.CommonDataKinds.Im.DATA));
 		 	        	    String imType;
 		 	        	    imType = imCur.getString(imCur.getColumnIndex(ContactsContract.CommonDataKinds.Im.TYPE));
 		 	        	    
-		 	        	    /*valueElement = document.createElement("imType");
-						    valueElement.setAttribute("value", imType);
-						    document.getElementsByTagName("contact").item(index).appendChild(valueElement);*/
+		 	        	    valueElement = document.createElement("imName");
+						    contactElement.appendChild(valueElement);
+						    valueElement.appendChild(document.createTextNode(imName));
 		 	        	
 		 	        	} 
 		 	        	imCur.close();
-		 	        	index++;
+		 	        	*/
 	        }
 		    
         }
@@ -476,6 +492,7 @@ public class MainActivity extends Activity {
 	        outFormat.setProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
 	        outFormat.setProperty(OutputKeys.VERSION, "1.0");
 	        outFormat.setProperty(OutputKeys.ENCODING, "UTF-8");
+	        outFormat.setProperty(OutputKeys.DOCTYPE_SYSTEM, "contacts.dtd");
 	        transformer.setOutputProperties(outFormat);
 	        DOMSource domSource = new DOMSource(document.getDocumentElement());
 	        OutputStream output = new ByteArrayOutputStream();
@@ -500,111 +517,59 @@ public class MainActivity extends Activity {
 			 
 	        
 	        
-	        
-	        
-	        
-	        
-	        
-	        
-	        
-	        
-	        
+	        //EINLESEN
+	      
 		    DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 		    DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-		    try {
-				document = docBuilder.parse(new File("files/test.xml"));
-			} catch (SAXException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
+		    
+			    try {
+			    	
+					document = docBuilder.parse(new File(dir+File.separator+contactsFileNameString));
+//					readContacts(document.getDocumentElement());
+					
+				} catch (SAXException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+		    	
+    		} catch (TransformerConfigurationException e) {
 				e.printStackTrace();
 			}
-		    	
-		    
-		    
-		    
-		    
-		    
-		    //doSomething((Node)document.getDocumentElement());
-		    	
-		    	
-		    	
-		    	
-		    	
-		    	
-    	} catch (TransformerConfigurationException e) {
-			e.printStackTrace();
-		}
         
-	} catch (ParserConfigurationException e1) {
+		} catch (ParserConfigurationException e1) {
 		e1.printStackTrace();
-	}	
+		}
 		
-			
-		/*	
-			 try {
-	              XmlResourceParser xpp = getResources().getXml();
-				
-	              String elemtext = null;
-
-	              while (eventType != XmlPullParser.END_DOCUMENT) {
-
-	                 if (eventType == XmlPullParser.START_TAG) {
-
-	                     String elemName = xpp.getName();
-	                     if (elemName.equals("catalog")) {
-	                 String journalAttr = xpp.getAttributeValue(null,
-	                                  "journal");
-	                 String publisherAttr = xpp.getAttributeValue(null,
-	                                  "publisher");
-	                        journal.setText(journalAttr);
-	                        publisher.setText(publisherAttr);
-	                     }
-	                     if (elemName.equals("article")) {
-	                        iter = iter + 1;
-	                     }
-						
-	                     if (elemName.equals("edition")) {
-	                        elemtext = "edition";
-	                     }
-	                     if (elemName.equals("title")) {
-	                        elemtext = "title";
-	                     }
-	                     if (elemName.equals("author")) {
-	                        elemtext = "author";
-	                     }
-	                 }
-
-	                 else if (eventType == XmlPullParser.TEXT) {
-	                     if (iter == 1) {
-	                        if (elemtext.equals("edition")) {
-	                             edition1.setText(xpp.getText());
-	                        } else if (elemtext.equals("title")) {
-	                             title1.setText(xpp.getText());
-	                        } else if (elemtext.equals("author")) {
-	                             author1.setText(xpp.getText());
-	                        }
-	                     }
-
-	                     else if (iter == 2) {
-	                        if (elemtext.equals("edition")) {
-	                             edition2.setText(xpp.getText());
-	                        } else if (elemtext.equals("title")) {
-	                             title2.setText(xpp.getText());
-	                        } else if (elemtext.equals("author")) {
-	                             author2.setText(xpp.getText());
-	                        }
-
-	                     }
-	                 }
-	                 eventType = xpp.next();
-	              }
-
-	         } catch (XmlPullParserException e) {
-	         } catch (IOException e) {
-	         }
-	         */
-			
+		System.out.println(batteryLevel);
+		
 	}
+
+	public void setBatteryLevel(int batteryL){
+		this.batteryLevel=batteryL;
+	}
+	
+	private BroadcastReceiver mBatInfoReceiver = new BroadcastReceiver(){
+	      
+	      private boolean index = true;
+	      private int level=0;
+	      
+	      public void onReceive(Context arg0, Intent intent) {
+	        
+	    	if(index){
+	    		level = intent.getIntExtra("level", 0);
+	    		batteryLevel=level;
+//	    		setBatteryLevel(level);
+	    		index = !index;
+	    	}
+
+	        
+
+	       // int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+	        
+	      }
+
+	    };
 	    
 	  /*  private final SensorEventListener TemperatureSensorListener
 	     = new SensorEventListener(){
@@ -627,20 +592,20 @@ public class MainActivity extends Activity {
 	    private final SensorEventListener AmbientTemperatureSensorListener
 	     = new SensorEventListener(){
 
-	   @Override
-	   public void onAccuracyChanged(Sensor sensor, int accuracy) {
-	    // TODO Auto-generated method stub
-	   
-	   }
-
-	   @Override
-	   public void onSensorChanged(SensorEvent event) {
-	    if(event.sensor.getType() == Sensor.TYPE_AMBIENT_TEMPERATURE){
-	        Log.i(TAG, "AMBIENT TEMPERATURE: " + event.values[0]);
-	    }
-	   }
+		   @Override
+		   public void onAccuracyChanged(Sensor sensor, int accuracy) {
+		    // TODO Auto-generated method stub
+		   
+		   }
+	
+		   @Override
+		   public void onSensorChanged(SensorEvent event) {
+		    if(event.sensor.getType() == Sensor.TYPE_AMBIENT_TEMPERATURE){
+		        Log.i(TAG, "AMBIENT TEMPERATURE: " + event.values[0]);
+		    }
+		   }
 	 
-	    };
+	   };
 		*/
 	
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -648,17 +613,87 @@ public class MainActivity extends Activity {
 		return true;
 	}
 	
-	private static void doSomething(Node node) {
-		// do something with the current node instead of System.out
-		Log.i(TAG,((Element)node).getAttribute("contactlist"));
-		/*NodeList nodeList = node.getChildNodes();
+	private void createSubDirs(Node node) {
+		NodeList nodeList = node.getChildNodes();
+		Log.i(TAG,Integer.toString(nodeList.getLength()));
+		Log.i(TAG, nodeList.item(0).getNodeName());
+		//Log.i(TAG, nodeList.item(index))
 		for (int i = 0; i < nodeList.getLength(); i++) {
-			Node currentNode = (Node) nodeList.item(i);
-			if (currentNode.getNodeType() == Node.ELEMENT_NODE) {
-				//calls this method for all the children which is Element
-				doSomething(currentNode);
+			
+		/*	
+			if (nodeList.item(i).getNodeName()=="d") {
+					currentTreeNode = new DefaultMutableTreeNode(((Element) nodeList.item(i)).getAttribute("name"));
+					treeNode.add(currentTreeNode);
+					createSubDirs(nodeList.item(i), currentTreeNode);
+		    }
+			else if(nodeList.item(i).getNodeName()=="f"){
+				treeNode.add(new DefaultMutableTreeNode(((Element) nodeList.item(i)).getAttribute("name")));
 			}
-		}*/
+		*/
+		}
+	}
+	
+	public void readContacts(Element doc) {
+		
+		NodeList contacts = doc.getElementsByTagName("contact");
+		NodeList childNodes;
+		
+		for(int i=0; i<contacts.getLength(); i++){
+			childNodes = contacts.item(i).getChildNodes();
+			
+			System.out.println("Kontakt: ");
+			 
+			for(int j=0; j<contacts.item(i).getChildNodes().getLength(); j++){
+				if(childNodes.item(j).getNodeName().equals("surename")){
+					System.out.println(((Element) childNodes.item(j)).getTextContent());
+					
+					String surenameString=((Element) childNodes.item(j)).getTextContent();
+					
+				}
+				else if(childNodes.item(j).getNodeName().equals("number")){
+					System.out.println(((Element) childNodes.item(j)).getTextContent());
+				}
+				else if(childNodes.item(j).getNodeName().equals("eMail")){
+					System.out.println(((Element) childNodes.item(j)).getTextContent());
+				}
+			}
+			
+			//KONTAKTE ERSTELLEN
+	        
+			//createNewContact("Test","000000");
+			
+//			System.out.println("\n");
+		}
+	}
+	
+	@SuppressWarnings("deprecation")
+	private void createNewContact(String nameString, String numberString){
+		
+		ContentValues personValues = new ContentValues();
+		personValues.put(Contacts.People.NAME, nameString);
+		/* STARRED 0 = Contacts, 1 = Favorites */
+		personValues.put(Contacts.People.STARRED, 1);
 
+		Uri newPersonUri = Contacts.People
+		  .createPersonInMyContactsGroup(getContentResolver(), personValues);
+
+		if (newPersonUri != null) {
+
+			ContentValues mobileValues = new ContentValues();
+			Uri mobileUri = Uri.withAppendedPath(newPersonUri,
+					Contacts.People.Phones.CONTENT_DIRECTORY);
+			mobileValues.put(Contacts.Phones.NUMBER,
+					numberString);
+			mobileValues.put(Contacts.Phones.TYPE,
+					Contacts.Phones.TYPE_MOBILE);
+			Uri phoneUpdate = getContentResolver()
+					.insert(mobileUri, mobileValues);
+			
+			if (phoneUpdate == null) {
+				Log.i(TAG, "error insert number");
+			}
+
+			
+		}
 	}
 }

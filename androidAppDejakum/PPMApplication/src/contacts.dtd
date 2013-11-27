@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!ELEMENT Personen (Person+)>
+<!ELEMENT Person (Name,Adresse)>
+<!ELEMENT Name (#PCDATA)>
+<!ELEMENT Adresse (#PCDATA)>
+
+<!ATTLIST Person id ID #REQUIRED>
+
+__________________________
+
+<!ELEMENT contactlist (contacts+)>
+<!ELEMENT contacts (surename,number,...)>
+<!ELEMENT surename (#PCDATA)>
+<!ELEMENT number (#PCDATA)>
+
+<!ATTLIST contact id ID #REQUIRED>
