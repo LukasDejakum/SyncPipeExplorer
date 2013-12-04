@@ -8,7 +8,6 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Properties;
 
-import javax.security.auth.PrivateCredentialPermission;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -19,25 +18,20 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-
-import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 
-import android.R.integer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
-import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.StatFs;
 import android.provider.Contacts;
 import android.provider.ContactsContract;
 import android.app.Activity;
@@ -65,13 +59,14 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		
 		this.registerReceiver(this.mBatInfoReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+
 		
 		String contactsFileNameString = "contacts.xml";
-		String propertiesFileNameString = "properties.xml";
 		
 		String stringToWrite = "test\n1,2\n";  
 		
 		SensorManager mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
+		
 		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 	    NetworkInfo Info = cm.getActiveNetworkInfo();
 	    
@@ -104,7 +99,19 @@ public class MainActivity extends Activity {
             Element mobileSignalElement = document.createElement("mobilesignal");
             rootElement.appendChild(mobileSignalElement);
             
-            Element valueElement;  
+            Element valueElement; 
+            
+            
+            
+       Log.d(TAG, "onClick: starting service contacts");
+       startService(new Intent(this, CreateContactsXML.class));
+       
+       Log.d(TAG, "onClick: starting service properties");
+       startService(new Intent(this, CreatePropertiesXML.class));   
+            
+            
+            
+            
             
 	    List<Sensor> sensorList = mSensorManager.getSensorList(Sensor.TYPE_ALL);
 
@@ -131,6 +138,7 @@ public class MainActivity extends Activity {
 		    valueElement.appendChild(document.createTextNode("no3GConnection"));
 
 	    }
+	    
 	    else{
 	    	 int netType = Info.getType();
 	         int netSubtype = Info.getSubtype();
@@ -146,12 +154,7 @@ public class MainActivity extends Activity {
 			    valueElement = document.createElement("mobileconnection");
 			    mobileSignalElement.appendChild(valueElement);
 			    valueElement.appendChild(document.createTextNode("no3GConnection because wifi is connected"));
-	            
-//			    valueElement.setAttribute("value", "wifiConnection");
-//			    document.getElementsByTagName("wifisignal").item(0).appendChild(valueElement);
-			    
-//			    valueElement.setAttribute("value", "GPRS/3G connection");
-//			    document.getElementsByTagName("mobilesignal").item(0).appendChild(valueElement);
+
 	            
 	            WifiManager wifiManager = (WifiManager) getApplication().getSystemService(Context.WIFI_SERVICE);
 	            List<ScanResult> scanResult = wifiManager.getScanResults();
@@ -171,10 +174,7 @@ public class MainActivity extends Activity {
 			    valueElement = document.createElement("mobileconnection");
 			    mobileSignalElement.appendChild(valueElement);
 			    valueElement.appendChild(document.createTextNode("GPRS/3G connection"));
-			    
-//			    valueElement.setAttribute("value", "noWifiConnection");
-//			    document.getElementsByTagName("wifisignal").item(0).appendChild(valueElement);
-	        
+
 			    
 	            // Need to get differentiate between 3G/GPRS
 	            
@@ -184,7 +184,7 @@ public class MainActivity extends Activity {
 	                
 	                valueElement = document.createElement("mobilesubtype");
 				    mobileSignalElement.appendChild(valueElement);
-				    valueElement.appendChild(document.createTextNode("NETWORK TYPE 1xRTT"));
+				    valueElement.appendChild(document.createTextNode("NETWORK TYPE 1xRTT ~ 50-100 kbps"));
 	                
 	            case TelephonyManager.NETWORK_TYPE_CDMA:
 	                stringToWrite=stringToWrite+"NETWORK TYPE CDMA (3G) Speed: 2 Mbps"; // ~ 14-64 kbps
@@ -315,7 +315,72 @@ public class MainActivity extends Activity {
 		        Log.i(TAG, "Sensor.TYPE_AMBIENT_TEMPERATURE NOT Available");
 	     }*/
 	    
-	
+	   /*
+	    MemoryInfo mi = new MemoryInfo();
+	    
+	    ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+	    activityManager.getMemoryInfo(mi);
+	    long availableInMB = mi.availMem / 104857;
+	    
+	    System.out.println(availableInMB);
+	    */
+
+	    
+	    
+	    //Internal Storage
+	    
+	    StatFs internalStatFs = new StatFs( Environment.getRootDirectory().getPath() );
+	    double internalTotal = ( internalStatFs.getBlockCount() * internalStatFs.getBlockSize() ) / 1048576L;
+	    double internalFree = ( internalStatFs.getAvailableBlocks() * internalStatFs.getBlockSize() ) /  1048576L ;
+	       
+	      
+	    double total = internalTotal;
+	    double free = internalFree ;
+	    double used = total - free;
+	    
+	    System.out.println(free);
+	    System.out.println(total);
+	    System.out.println(used);
+	    
+	    
+	    
+	    //SD CARD
+	    
+	    StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
+	    double sdAvailSize = (double)stat.getAvailableBlocks()* (double)stat.getBlockSize();
+	    double sdTotalSize = (double)stat.getBlockCount()*(double)stat.getBlockSize();
+	    
+	    double freeSDSpaceInMB = sdAvailSize / 1048576L;
+	    double totalSDSpaceInMB= sdTotalSize/1048576L;
+	    double usedSDSpaceInMB= totalSDSpaceInMB-freeSDSpaceInMB;
+	    
+	    System.out.println(freeSDSpaceInMB);
+	    System.out.println(totalSDSpaceInMB);
+	    System.out.println(usedSDSpaceInMB);
+	    
+	    //Total Storage
+	    
+	    
+	    
+	    
+	    //RAM
+	    
+	    final Runtime runtime = Runtime.getRuntime();
+	    final long usedMemInMB=(runtime.maxMemory() - runtime.freeMemory()) / 104857;
+	    final long freeMemInMB=runtime.maxMemory() / 104857;
+
+	    System.out.println(usedMemInMB);
+	    System.out.println(freeMemInMB);
+	    System.out.println(freeMemInMB+usedMemInMB);
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
 	    
 	    
 	    
@@ -559,7 +624,8 @@ public class MainActivity extends Activity {
 	    	if(index){
 	    		level = intent.getIntExtra("level", 0);
 	    		batteryLevel=level;
-//	    		setBatteryLevel(level);
+	    		System.err.println(level);
+	    		setBatteryLevel(level);
 	    		index = !index;
 	    	}
 
