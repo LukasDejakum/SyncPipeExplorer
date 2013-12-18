@@ -48,38 +48,34 @@ public class CreatePropertiesXML extends Service{
 		return null;
 	}
 	
-	@Override
 	public void onCreate() {
 		Toast.makeText(this, "My Properties XML Created", Toast.LENGTH_LONG).show();
 		Log.d(TAG, "onCreate");
 		
-		this.registerReceiver(this.mBatInfoReceiver, 
-                new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+//		this.registerReceiver(this.mBatInfoReceiver,
+//                new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 	}
 	
-	@Override
 	public void onDestroy() {
 		Toast.makeText(this, "My Service Stopped Properties", Toast.LENGTH_SHORT).show();
 		Log.d(TAG, "onDestroy");
+//		this.unregisterReceiver(mBatInfoReceiver);
+		
 	}
 
 	public void onStart(Intent intent, int startid) {
 		Toast.makeText(this, "My Service Started Properties", Toast.LENGTH_SHORT).show();
 		Log.d(TAG, "onStart");
-		
-		
-		this.initialize();	
-					
+		this.initialize();
 	}
 	
 	 public void initialize(){
 	        Thread th = new Thread(new Runnable() {
 
-	            @Override
 	            public void run() {
 	            	String propertiesFileNameString = "properties.xml";
 	        		
-	        		String stringToWrite = "test\n1,2\n";  
+//	        		String stringToWrite = "test\n1,2\n";  
 
 	        		
 	        		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -108,13 +104,15 @@ public class CreatePropertiesXML extends Service{
 	        	            Element rootElement = document.createElement("properties");
 	        	            document.appendChild(rootElement);
 	        	            
+	        	            Element valueElement; 
+
+	        	            
 	        	            Element internetSignalElement = document.createElement("wifisignal");
 	        	            rootElement.appendChild(internetSignalElement);
 	        	            
 	        	            Element mobileSignalElement = document.createElement("mobilesignal");
 	        	            rootElement.appendChild(mobileSignalElement);
 	        	            
-	        	            Element valueElement; 
 	        	            
 	        	            if (Info == null || !Info.isConnectedOrConnecting()) {
 	        	            	valueElement = document.createElement("wificonnection");
@@ -153,7 +151,7 @@ public class CreatePropertiesXML extends Service{
 	        	    	            }
 	        	    	        } 
 	        	    	        else if (netType == ConnectivityManager.TYPE_MOBILE) {
-	        	    	        	stringToWrite=stringToWrite+"GPRS/3G connection avaliable\nThe phone supports following NETWORK TYPES:\n\n";
+//	        	    	        	stringToWrite=stringToWrite+"GPRS/3G connection avaliable\nThe phone supports following NETWORK TYPES:\n\n";
 	        	    	            
 	        	    	            valueElement = document.createElement("wificonnection");
 	        	    	            internetSignalElement.appendChild(valueElement);
@@ -175,41 +173,80 @@ public class CreatePropertiesXML extends Service{
 	        	    				    valueElement.appendChild(document.createTextNode("NETWORK TYPE 1xRTT ~ 50-100 kbps"));
 	        	    	                
 	        	    	            case TelephonyManager.NETWORK_TYPE_CDMA:
-	        	    	                stringToWrite=stringToWrite+"NETWORK TYPE CDMA (3G) Speed: 2 Mbps"; // ~ 14-64 kbps
+//	        	    	                stringToWrite=stringToWrite+"NETWORK TYPE CDMA (3G) Speed: 2 Mbps"; // ~ 14-64 kbps
+	        	    	                valueElement = document.createElement("mobilesubtype");
+	        	    				    mobileSignalElement.appendChild(valueElement);
+	        	    				    valueElement.appendChild(document.createTextNode("NETWORK TYPE CDMA (3G) Speed: 2 Mbps"));
 	        	    	            case TelephonyManager.NETWORK_TYPE_EDGE:
 
-	        	    	                stringToWrite=stringToWrite+"NETWORK TYPE EDGE (2.75G) Speed: 100-120 Kbps"; // ~
-	        	    	                                                                        // 50-100
+//	        	    	                stringToWrite=stringToWrite+"NETWORK TYPE EDGE (2.75G) Speed: 100-120 Kbps"; // ~
+	        	    	                                                                       // 50-100
 	        	    	                                                                        // kbps
+	        	    	                valueElement = document.createElement("mobilesubtype");
+	        	    				    mobileSignalElement.appendChild(valueElement);
+	        	    				    valueElement.appendChild(document.createTextNode("NETWORK TYPE EDGE (2.75G) Speed: 100-120 Kbps"));
 	        	    	            case TelephonyManager.NETWORK_TYPE_EVDO_0:
-	        	    	                stringToWrite=stringToWrite+"NETWORK TYPE EVDO_0"; // ~ 400-1000 kbps
+//	        	    	                stringToWrite=stringToWrite+"NETWORK TYPE EVDO_0"; // ~ 400-1000 kbps
+	        	    	                valueElement = document.createElement("mobilesubtype");
+	        	    				    mobileSignalElement.appendChild(valueElement);
+	        	    				    valueElement.appendChild(document.createTextNode("NETWORK TYPE EVDO_0"));
 	        	    	            case TelephonyManager.NETWORK_TYPE_EVDO_A:
-	        	    	                stringToWrite=stringToWrite+"NETWORK TYPE EVDO_A"; // ~ 600-1400 kbps
+//	        	    	                stringToWrite=stringToWrite+"NETWORK TYPE EVDO_A"; // ~ 600-1400 kbps
+	        	    	                valueElement = document.createElement("mobilesubtype");
+	        	    				    mobileSignalElement.appendChild(valueElement);
+	        	    				    valueElement.appendChild(document.createTextNode("NETWORK TYPE EVDO_A"));
 	        	    	            case TelephonyManager.NETWORK_TYPE_GPRS:
-	        	    	                stringToWrite=stringToWrite+"NETWORK TYPE GPRS (2.5G) Speed: 40-50 Kbps"; // ~ 100
+//	        	    	                stringToWrite=stringToWrite+"NETWORK TYPE GPRS (2.5G) Speed: 40-50 Kbps"; // ~ 100
 	        	    	                                                                        // kbps
+	        	    	                valueElement = document.createElement("mobilesubtype");
+	        	    				    mobileSignalElement.appendChild(valueElement);
+	        	    				    valueElement.appendChild(document.createTextNode("NETWORK TYPE GPRS (2.5G) Speed: 40-50 Kbps"));
 	        	    	            case TelephonyManager.NETWORK_TYPE_HSDPA:
-	        	    	                stringToWrite=stringToWrite+"NETWORK TYPE HSDPA (4G) Speed: 2-14 Mbps"; // ~ 2-14
+//	        	    	                stringToWrite=stringToWrite+"NETWORK TYPE HSDPA (4G) Speed: 2-14 Mbps"; // ~ 2-14
 	        	    	                                                                    // Mbps
+	        	    	                valueElement = document.createElement("mobilesubtype");
+	        	    				    mobileSignalElement.appendChild(valueElement);
+	        	    				    valueElement.appendChild(document.createTextNode("NETWORK TYPE HSDPA (4G) Speed: 2-14 Mbps"));
 	        	    	            case TelephonyManager.NETWORK_TYPE_HSPA:
-	        	    	                stringToWrite=stringToWrite+"NETWORK TYPE HSPA (4G) Speed: 0.7-1.7 Mbps"; // ~
+//	        	    	                stringToWrite=stringToWrite+"NETWORK TYPE HSPA (4G) Speed: 0.7-1.7 Mbps"; // ~
 	        	    	                                                                        // 700-1700
 	        	    	                                                                        // kbps
+	        	    	                valueElement = document.createElement("mobilesubtype");
+	        	    				    mobileSignalElement.appendChild(valueElement);
+	        	    				    valueElement.appendChild(document.createTextNode("NETWORK TYPE HSPA (4G) Speed: 0.7-1.7 Mbps"));
 	        	    	            case TelephonyManager.NETWORK_TYPE_HSUPA:
-	        	    	                stringToWrite=stringToWrite+"NETWORK TYPE HSUPA (3G) Speed: 1-23 Mbps"; // ~ 1-23
+//	        	    	                stringToWrite=stringToWrite+"NETWORK TYPE HSUPA (3G) Speed: 1-23 Mbps"; // ~ 1-23
 	        	    	                                                                    // Mbps
+	        	    	                valueElement = document.createElement("mobilesubtype");
+	        	    				    mobileSignalElement.appendChild(valueElement);
+	        	    				    valueElement.appendChild(document.createTextNode("NETWORK TYPE HSUPA (3G) Speed: 1-23 Mbps"));
 	        	    	            case TelephonyManager.NETWORK_TYPE_UMTS:
-	        	    	                stringToWrite=stringToWrite+"NETWORK TYPE UMTS (3G) Speed: 0.4-7 Mbps"; // ~ 400-7000
+//	        	    	                stringToWrite=stringToWrite+"NETWORK TYPE UMTS (3G) Speed: 0.4-7 Mbps"; // ~ 400-7000
+	        	    	                valueElement = document.createElement("mobilesubtype");
+	        	    				    mobileSignalElement.appendChild(valueElement);
+	        	    				    valueElement.appendChild(document.createTextNode("NETWORK TYPE UMTS (3G) Speed: 0.4-7 Mbps"));
 	        	    	                // NOT AVAILABLE YET IN API LEVEL 7
 	        	    	            case TelephonyManager.NETWORK_TYPE_EHRPD:
-	        	    	                stringToWrite=stringToWrite+"NETWORK TYPE EHRPD"; // ~ 1-2 Mbps
+//	        	    	                stringToWrite=stringToWrite+"NETWORK TYPE EHRPD"; // ~ 1-2 Mbps
+	        	    	                valueElement = document.createElement("mobilesubtype");
+	        	    				    mobileSignalElement.appendChild(valueElement);
+	        	    				    valueElement.appendChild(document.createTextNode("NETWORK TYPE EHRPD"));
 	        	    	            case TelephonyManager.NETWORK_TYPE_EVDO_B:
-	        	    	                stringToWrite=stringToWrite+"NETWORK_TYPE_EVDO_B"; // ~ 5 Mbps
+//	        	    	                stringToWrite=stringToWrite+"NETWORK_TYPE_EVDO_B"; // ~ 5 Mbps
+	        	    	                valueElement = document.createElement("mobilesubtype");
+	        	    				    mobileSignalElement.appendChild(valueElement);
+	        	    				    valueElement.appendChild(document.createTextNode("NETWORK_TYPE_EVDO_B"));
 	        	    	            case TelephonyManager.NETWORK_TYPE_HSPAP:
-	        	    	                stringToWrite=stringToWrite+"NETWORK TYPE HSPA+ (4G) Speed: 10-20 Mbps"; // ~ 10-20
+//	        	    	                stringToWrite=stringToWrite+"NETWORK TYPE HSPA+ (4G) Speed: 10-20 Mbps"; // ~ 10-20
 	        	    	                                                                    // Mbps
+	        	    	                valueElement = document.createElement("mobilesubtype");
+	        	    				    mobileSignalElement.appendChild(valueElement);
+	        	    				    valueElement.appendChild(document.createTextNode("NETWORK TYPE HSPA+ (4G) Speed: 10-20 Mbps"));
 	        	    	            case TelephonyManager.NETWORK_TYPE_IDEN:
-	        	    	                stringToWrite=stringToWrite+"NETWORK TYPE IDEN"; // ~25 kbps
+//	        	    	                stringToWrite=stringToWrite+"NETWORK TYPE IDEN"; // ~25 kbps
+	        	    	                valueElement = document.createElement("mobilesubtype");
+	        	    				    mobileSignalElement.appendChild(valueElement);
+	        	    				    valueElement.appendChild(document.createTextNode("NETWORK TYPE IDEN"));
 	        	    	            case TelephonyManager.NETWORK_TYPE_LTE:
 	        	    	                
 	        	    	                valueElement = document.createElement("mobilesubtype");
@@ -218,16 +255,28 @@ public class CreatePropertiesXML extends Service{
 	        	    	                
 	        	    	            }
 	        	    	        } else {
-	        	    	            stringToWrite=stringToWrite+"error";
+//	        	    	            stringToWrite=stringToWrite+"ERROR";
+	        	    	            valueElement = document.createElement("mobilesubtype");
+        	    				    mobileSignalElement.appendChild(valueElement);
+        	    				    valueElement.appendChild(document.createTextNode("ERROR"));
 	        	    	        }
 	        	    	    }
+	        	            
+	        	            
+	        	            
+	        	            
 	        	    	    
-	        	    	    stringToWrite=stringToWrite+"Signal Strength \n";
+	        	    	    
 	        	    	    
 	        	    	    
 	        	    	 //nur JeallyBean
 	        	    	    
-	        	    	 /*   
+	        	    	 /* 
+	        	    	  
+	        	    	   stringToWrite=stringToWrite+"Signal Strength \n";
+	        	    	   
+	        	    	   
+	        	    	   
 	        	    	    TelephonyManager telephonyManager = (TelephonyManager)this.getSystemService(Context.TELEPHONY_SERVICE);
 	        	    	 // for example value of first element
 	        	    	 CellInfoGsm cellinfogsm = (CellInfoGsm)telephonyManager.getAllCellInfo().get(0);
@@ -302,64 +351,160 @@ public class CreatePropertiesXML extends Service{
 	        	    	     }else{
 	        	    		        Log.i(TAG, "Sensor.TYPE_AMBIENT_TEMPERATURE NOT Available");
 	        	    	     }*/
-	        	    	    
-	        	    	   /*
-	        	    	    MemoryInfo mi = new MemoryInfo();
-	        	    	    
-	        	    	    ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-	        	    	    activityManager.getMemoryInfo(mi);
-	        	    	    long availableInMB = mi.availMem / 104857;
-	        	    	    
-	        	    	    System.out.println(availableInMB);
-	        	    	    */
 
+	        	    	    
+	        	    	    
+	        	    	    
+	        	    	    
+	        	    	    
 	        	    	    
 	        	    	    
 	        	    	    //Internal Storage
 	        	    	    
+	        	    	    Element internalStorageElement = document.createElement("internalstorage");
+	        	            rootElement.appendChild(internalStorageElement);
+	        	    	    
 	        	    	    StatFs internalStatFs = new StatFs( Environment.getRootDirectory().getPath() );
-	        	    	    double internalTotal = ( internalStatFs.getBlockCount() * internalStatFs.getBlockSize() ) / 1048576L;
-	        	    	    double internalFree = ( internalStatFs.getAvailableBlocks() * internalStatFs.getBlockSize() ) /  1048576L ;
+	        	    	    double internalTotal = ( internalStatFs.getBlockCount() * internalStatFs.getBlockSize() ) / 1048576;
+	        	    	    double internalFree = ( internalStatFs.getAvailableBlocks() * internalStatFs.getBlockSize() ) /  1048576;
 	        	    	       
 	        	    	      
-	        	    	    double total = internalTotal;
-	        	    	    double free = internalFree ;
-	        	    	    double used = total - free;
+	        	    	    Double totalInternalStorage = internalTotal;
+	        	    	    Double freeInternalStorage = internalFree ;
+	        	    	    Double usedInternalStorage = totalInternalStorage - freeInternalStorage;
 	        	    	    
-	        	    	    System.out.println(free);
-	        	    	    System.out.println(total);
-	        	    	    System.out.println(used);
+	        	    	    valueElement = document.createElement("totalinternalstorage");
+    	    	            internalStorageElement.appendChild(valueElement);
+    	    			    valueElement.appendChild(document.createTextNode(totalInternalStorage.toString()+" MB"));
+    	    			    
+    	    			    valueElement = document.createElement("freeinternalstorage");
+    	    	            internalStorageElement.appendChild(valueElement);
+    	    			    valueElement.appendChild(document.createTextNode(freeInternalStorage.toString()+" MB"));
+    	    			    
+    	    			    valueElement = document.createElement("usedinternalstorage");
+    	    	            internalStorageElement.appendChild(valueElement);
+    	    			    valueElement.appendChild(document.createTextNode(usedInternalStorage.toString()+" MB"));
+	        	    	    
+//	        	    	    System.out.println(freeInternalStorage);
+//	        	    	    System.out.println(totalInternalStorage);
+//	        	    	    System.out.println(usedInternalStorage);
 	        	    	    
 	        	    	    
 	        	    	    
 	        	    	    //SD CARD
 	        	    	    
+	        	    	    Element sdCardStorageElement = document.createElement("sdcardstorage");
+	        	            rootElement.appendChild(sdCardStorageElement);
+	        	    	    
 	        	    	    StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
 	        	    	    double sdAvailSize = (double)stat.getAvailableBlocks()* (double)stat.getBlockSize();
 	        	    	    double sdTotalSize = (double)stat.getBlockCount()*(double)stat.getBlockSize();
 	        	    	    
-	        	    	    double freeSDSpaceInMB = sdAvailSize / 1048576L;
-	        	    	    double totalSDSpaceInMB= sdTotalSize/1048576L;
-	        	    	    double usedSDSpaceInMB= totalSDSpaceInMB-freeSDSpaceInMB;
+	        	    	    Double totalSDSpaceInMB= sdTotalSize/1048576;
+	        	    	    Double freeSDSpaceInMB = sdAvailSize / 1048576;
+	        	    	    Double usedSDSpaceInMB= totalSDSpaceInMB-freeSDSpaceInMB;
 	        	    	    
-	        	    	    System.out.println(freeSDSpaceInMB);
-	        	    	    System.out.println(totalSDSpaceInMB);
-	        	    	    System.out.println(usedSDSpaceInMB);
+	        	    	    valueElement = document.createElement("totalsdstorage");
+    	    	            sdCardStorageElement.appendChild(valueElement);
+    	    			    valueElement.appendChild(document.createTextNode(totalSDSpaceInMB.toString()+" MB"));
+    	    			    
+    	    			    valueElement = document.createElement("freeinternalstorage");
+    	    	            sdCardStorageElement.appendChild(valueElement);
+    	    			    valueElement.appendChild(document.createTextNode(freeSDSpaceInMB.toString()+" MB"));
+    	    			    
+    	    			    valueElement = document.createElement("usedinternalstorage");
+    	    	            sdCardStorageElement.appendChild(valueElement);
+    	    			    valueElement.appendChild(document.createTextNode(usedSDSpaceInMB.toString()+" MB"));
+	        	    	    
+//	        	    	    System.out.println(freeSDSpaceInMB);
+//	        	    	    System.out.println(totalSDSpaceInMB);
+//	        	    	    System.out.println(usedSDSpaceInMB);
 	        	    	    
 	        	    	    //Total Storage
 	        	    	    
+	        	    	    Element totalStorageElement = document.createElement("totalstorage");
+	        	            rootElement.appendChild(totalStorageElement);
 	        	    	    
+	        	    	    Double totalStorage = totalSDSpaceInMB+totalInternalStorage;
+	        	    	    Double totalFreeStorage = freeInternalStorage+freeSDSpaceInMB;
+	        	    	    Double totalUsedStorage = usedInternalStorage+usedSDSpaceInMB;
+	        	    	    
+	        	            valueElement = document.createElement("totalstorage");
+    	    	            totalStorageElement.appendChild(valueElement);
+    	    			    valueElement.appendChild(document.createTextNode(totalStorage.toString()+" MB"));
+    	    			    
+    	    			    valueElement = document.createElement("totalfreestorage");
+    	    	            totalStorageElement.appendChild(valueElement);
+    	    			    valueElement.appendChild(document.createTextNode(totalFreeStorage.toString()+" MB"));
+    	    			    
+    	    			    valueElement = document.createElement("totalusedstorage");
+    	    	            totalStorageElement.appendChild(valueElement);
+    	    			    valueElement.appendChild(document.createTextNode(totalUsedStorage.toString()+" MB"));
 	        	    	    
 	        	    	    
 	        	    	    //RAM
+	        	            
+	        	            Element ramElement = document.createElement("ram");
+	        	            rootElement.appendChild(ramElement);
 	        	    	    
 	        	    	    final Runtime runtime = Runtime.getRuntime();
-	        	    	    final long usedMemInMB=(runtime.maxMemory() - runtime.freeMemory()) / 104857;
-	        	    	    final long freeMemInMB=runtime.maxMemory() / 104857;
+	        	    	    final Long usedMemInMB=(runtime.maxMemory() - runtime.freeMemory()) / 104857;
+	        	    	    final Long freeMemInMB=runtime.maxMemory() / 104857;
+	        	    	    final Long totalMemInMB=usedMemInMB+freeMemInMB;
 
-	        	    	    System.out.println(usedMemInMB);
-	        	    	    System.out.println(freeMemInMB);
-	        	    	    System.out.println(freeMemInMB+usedMemInMB);
+	        	    	    
+	        	    	    valueElement = document.createElement("totalram");
+    	    	            ramElement.appendChild(valueElement);
+    	    			    valueElement.appendChild(document.createTextNode(totalMemInMB.toString()+" MB"));
+    	    			    
+    	    			    valueElement = document.createElement("freeram");
+    	    	            ramElement.appendChild(valueElement);
+    	    			    valueElement.appendChild(document.createTextNode(freeMemInMB.toString()+" MB"));
+	        	    	    
+    	    			    valueElement = document.createElement("usedram");
+    	    	            ramElement.appendChild(valueElement);
+    	    			    valueElement.appendChild(document.createTextNode(usedMemInMB.toString()+" MB"));
+	        	    	    
+
+//	        	    	    System.out.println(usedMemInMB);
+//	        	    	    System.out.println(freeMemInMB);
+//	        	    	    System.out.println(freeMemInMB+usedMemInMB);
+	        	    	    
+	        	    	    
+	        	    	    //BATTERY VALUE
+	        	    	    
+	        	    	    Element batteryElement = document.createElement("battery");
+	        	            rootElement.appendChild(batteryElement);
+	        	    	    
+	        	    	    IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+	        	    	    Intent batteryStatus = registerReceiver(null, ifilter);
+	        	    	    
+	        	    	    Integer level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+	        	    	    Integer temp = batteryStatus.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, -1);
+	        			    Integer voltage = batteryStatus.getIntExtra(BatteryManager.EXTRA_VOLTAGE, -1);
+	        			    Integer status = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+	        	    	    
+	        	    	    valueElement = document.createElement("batteryvalue");
+    	    	            batteryElement.appendChild(valueElement);
+    	    			    valueElement.appendChild(document.createTextNode(level.toString()));
+
+    	    			    valueElement = document.createElement("batterytemperature");
+    	    	            batteryElement.appendChild(valueElement);
+    	    			    valueElement.appendChild(document.createTextNode(temp.toString()));
+
+    	    			    valueElement = document.createElement("batteryvoltage");
+    	    	            batteryElement.appendChild(valueElement);
+    	    			    valueElement.appendChild(document.createTextNode(voltage.toString()));
+    	    			    
+    	    			    valueElement = document.createElement("batterystatus");
+    	    	            batteryElement.appendChild(valueElement);
+    	    			    valueElement.appendChild(document.createTextNode(status.toString()));
+	        	    	    
+	        	    	    
+	        	    	    
+	        	    	    
+	        	    	    
+	        	    	    
 	        	    	    
 	        	    	    try {
 	        	                
@@ -371,7 +516,7 @@ public class CreatePropertiesXML extends Service{
 	        	    	        outFormat.setProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
 	        	    	        outFormat.setProperty(OutputKeys.VERSION, "1.0");
 	        	    	        outFormat.setProperty(OutputKeys.ENCODING, "UTF-8");
-	        	    	        outFormat.setProperty(OutputKeys.DOCTYPE_SYSTEM, "contacts.dtd");
+	        	    	        outFormat.setProperty(OutputKeys.DOCTYPE_SYSTEM, "properties.dtd");
 	        	    	        transformer.setOutputProperties(outFormat);
 	        	    	        DOMSource domSource = new DOMSource(document.getDocumentElement());
 	        	    	        OutputStream output = new ByteArrayOutputStream();
@@ -398,22 +543,21 @@ public class CreatePropertiesXML extends Service{
 	        				}
 	        			} catch (ParserConfigurationException e1) {
 	        			e1.printStackTrace();
-	        			}
+	        			}	
+	        			stopSelf();
 	            }
 	        });
 	        th.start();
 	        
 	    }
 
-
+/*
 	 private BroadcastReceiver mBatInfoReceiver = new BroadcastReceiver(){
-		    @Override
 		    public void onReceive(Context arg0, Intent intent) {
-		      // TODO Auto-generated method stub
 		        //this will give you battery current status
 
 		    try{
-		      int level = intent.getIntExtra("level", 0);
+		      int batteryLevel = intent.getIntExtra("level", 0);
 		      int temp = intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, -1);
 		      int voltage = intent.getIntExtra(BatteryManager.EXTRA_VOLTAGE, -1);
 		      int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
@@ -425,12 +569,6 @@ public class CreatePropertiesXML extends Service{
 		      if (status == BatteryManager.BATTERY_STATUS_NOT_CHARGING){BStatus = "Not Charging";}
 		      if (status == BatteryManager.BATTERY_STATUS_UNKNOWN){BStatus = "Unknown";}
 
-		      int chargePlug = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
-		      String BattPowerSource = "No Data";
-		      if (chargePlug == BatteryManager.BATTERY_PLUGGED_AC){BattPowerSource = "AC";}
-		      if (chargePlug == BatteryManager.BATTERY_PLUGGED_USB){BattPowerSource = "USB";}
-
-		      String BattLevel = String.valueOf(level);
 
 		      int BHealth = intent.getIntExtra(BatteryManager.EXTRA_HEALTH, -1);
 		      String BatteryHealth = "No Data";
@@ -444,13 +582,12 @@ public class CreatePropertiesXML extends Service{
 
 		      //Do whatever with the data here
 
-		      System.out.println(level);
-
 		    } catch (Exception e){
 		        Log.v(TAG, "Battery Info Error");
 		    }
 		    }
 		  };
+		  */
 }
 
 

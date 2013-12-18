@@ -56,9 +56,7 @@ public class CreateContactsXML extends Service{
 		Toast.makeText(this, "My Service Started Contacts", Toast.LENGTH_SHORT).show();
 		Log.d(TAG, "onStart");
 		
-		this.initialize();
-		this.onDestroy();
-	
+		this.initialize();	
 	}
 
 	public void initialize(){
@@ -91,7 +89,8 @@ public class CreateContactsXML extends Service{
         			
                   //CONTACTS
             	    
-            	    Element rooElement = document.createElement("contactlist");            	    
+            	    Element rooElement = document.createElement("contactlist");  
+            	    document.appendChild(rooElement);
             	    Element contactElement;
                     Element valueElement; 
 
@@ -116,10 +115,8 @@ public class CreateContactsXML extends Service{
               	        	rooElement.appendChild(contactElement);
             			    
             			    valueElement = document.createElement("surename");
-            			    //valueElement.setAttribute("value", name)
             			    contactElement.appendChild(valueElement);
             			    valueElement.appendChild(document.createTextNode(name));
-            			    //document.getElementsByTagName("contact").item(index).appendChild(valueElement);
             			    
             			    /*
             			    valueElement = document.createElement("familyname");
@@ -284,11 +281,10 @@ public class CreateContactsXML extends Service{
         		} catch (ParserConfigurationException e1) {
         		e1.printStackTrace();
         		}
-        		
+        		stopSelf();
             }
         });
         th.start();
     }
-
 }
 
