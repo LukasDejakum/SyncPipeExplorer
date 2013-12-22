@@ -52,14 +52,12 @@ public class CreatePropertiesXML extends Service{
 		Toast.makeText(this, "My Properties XML Created", Toast.LENGTH_LONG).show();
 		Log.d(TAG, "onCreate");
 		
-//		this.registerReceiver(this.mBatInfoReceiver,
-//                new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+
 	}
 	
 	public void onDestroy() {
 		Toast.makeText(this, "My Service Stopped Properties", Toast.LENGTH_SHORT).show();
 		Log.d(TAG, "onDestroy");
-//		this.unregisterReceiver(mBatInfoReceiver);
 		
 	}
 
@@ -74,9 +72,6 @@ public class CreatePropertiesXML extends Service{
 
 	            public void run() {
 	            	String propertiesFileNameString = "properties.xml";
-	        		
-//	        		String stringToWrite = "test\n1,2\n";  
-
 	        		
 	        		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 	        	    NetworkInfo Info = cm.getActiveNetworkInfo();
@@ -416,10 +411,6 @@ public class CreatePropertiesXML extends Service{
     	    	            sdCardStorageElement.appendChild(valueElement);
     	    			    valueElement.appendChild(document.createTextNode(usedSDSpaceInMB.toString()+" MB"));
 	        	    	    
-//	        	    	    System.out.println(freeSDSpaceInMB);
-//	        	    	    System.out.println(totalSDSpaceInMB);
-//	        	    	    System.out.println(usedSDSpaceInMB);
-	        	    	    
 	        	    	    //Total Storage
 	        	    	    
 	        	    	    Element totalStorageElement = document.createElement("totalstorage");
@@ -464,11 +455,6 @@ public class CreatePropertiesXML extends Service{
     	    			    valueElement = document.createElement("usedram");
     	    	            ramElement.appendChild(valueElement);
     	    			    valueElement.appendChild(document.createTextNode(usedMemInMB.toString()+" MB"));
-	        	    	    
-
-//	        	    	    System.out.println(usedMemInMB);
-//	        	    	    System.out.println(freeMemInMB);
-//	        	    	    System.out.println(freeMemInMB+usedMemInMB);
 	        	    	    
 	        	    	    
 	        	    	    //BATTERY VALUE

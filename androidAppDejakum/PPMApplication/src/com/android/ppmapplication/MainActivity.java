@@ -1,27 +1,18 @@
 package com.android.ppmapplication;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
+
+import com.android.ppmapplication.services.CreateContactsXML;
+import com.android.ppmapplication.services.ReadContactsXML;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.Contacts;
-import android.provider.ContactsContract;
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.util.Log;
@@ -35,11 +26,9 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
 		SensorManager mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
 
-		
-		/**/
-            
             
        Log.d(TAG, "onClick: starting service contacts");
        startService(new Intent(this, CreateContactsXML.class));
@@ -47,8 +36,14 @@ public class MainActivity extends Activity {
        Log.d(TAG, "onClick: starting service properties");
        startService(new Intent(this, CreatePropertiesXML.class));               
             
-            
-	    List<Sensor> sensorList = mSensorManager.getSensorList(Sensor.TYPE_ALL);
+       Log.d(TAG, "onClick: starting service read");
+       startService(new Intent(this, ReadContactsXML.class));
+       
+
+       
+       
+       
+       List<Sensor> sensorList = mSensorManager.getSensorList(Sensor.TYPE_ALL);
 
 	    Log.w(TAG, "sl size = " + sensorList.size());
 	    for(int i=0;i<sensorList.size();i++) {
@@ -66,40 +61,7 @@ public class MainActivity extends Activity {
 	    
 	    
 	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	        //EINLESEN
-	      
-		    DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-		    DocumentBuilder docBuilder;
-			try {
-				docBuilder = docBuilderFactory.newDocumentBuilder();
-			
-		    Document document = docBuilder.newDocument();
-		    
-		    File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath());
-        	String contactsFileNameString = "contact.xml";
 
-			    try {
-			    	
-					document = docBuilder.parse(new File(dir+File.separator+contactsFileNameString));
-//					readContacts(document.getDocumentElement());
-					
-				} catch (SAXException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			} catch (ParserConfigurationException e1) {
-				e1.printStackTrace();
-			}
 		    	
 	}
 
@@ -166,39 +128,6 @@ public class MainActivity extends Activity {
 		}
 	}
 	
-	public void readContacts(Element doc) {
-		
-		NodeList contacts = doc.getElementsByTagName("contact");
-		NodeList childNodes;
-		
-		for(int i=0; i<contacts.getLength(); i++){
-			childNodes = contacts.item(i).getChildNodes();
-			
-			System.out.println("Kontakt: ");
-			 
-			for(int j=0; j<contacts.item(i).getChildNodes().getLength(); j++){
-				if(childNodes.item(j).getNodeName().equals("surename")){
-//					System.out.println(((Element) childNodes.item(j)).getTextContent());
-					
-					String surenameString=((Element) childNodes.item(j)).getTextContent();
-					System.out.println(surenameString);
-					
-				}
-				else if(childNodes.item(j).getNodeName().equals("number")){
-					System.out.println(((Element) childNodes.item(j)).getTextContent());
-				}
-				else if(childNodes.item(j).getNodeName().equals("eMail")){
-					System.out.println(((Element) childNodes.item(j)).getTextContent());
-				}
-			}
-			
-			//KONTAKTE ERSTELLEN
-	        
-			//createNewContact("Test","000000");
-			
-//			System.out.println("\n");
-		}
-	}
 	
 	@SuppressWarnings("deprecation")
 	private void createNewContact(String nameString, String numberString){
@@ -229,24 +158,6 @@ public class MainActivity extends Activity {
 		}
 	}
 	
-	private void deleteAllContact() {
-		
-		ContentResolver cr = getContentResolver();
-	    Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
-	            null, null, null, null);
-	    while (cur.moveToNext()) {
-	        try{
-	            String lookupKey = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.LOOKUP_KEY));
-	            Uri uri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_LOOKUP_URI, lookupKey);
-	            System.out.println("The uri is " + uri.toString());
-	            cr.delete(uri, null, null);
-	        }
-	        catch(Exception e)
-	        {
-	            System.out.println(e.getStackTrace());
-	        }
-	    }
-		
-	}
+
 }
 
