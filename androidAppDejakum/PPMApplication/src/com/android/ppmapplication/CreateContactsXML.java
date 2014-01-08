@@ -1,4 +1,4 @@
-package com.android.ppmapplication.services;
+package com.android.ppmapplication;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -67,7 +67,7 @@ public class CreateContactsXML extends Service{
             	String contactsFileNameString = "contact.xml";
 
         		
-        		File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath());
+        		File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/SyncPipe/");
         		File newfile = new File(dir, File.separator + contactsFileNameString);
         		if(newfile.exists()){
         			newfile.delete();

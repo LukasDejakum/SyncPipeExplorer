@@ -1,4 +1,4 @@
-package com.android.ppmapplication.services;
+package com.android.ppmapplication;
 
 import java.io.File;
 import java.io.IOException;
@@ -74,7 +74,7 @@ public class ReadContactsXML extends Service{
 		
 	    Document document = docBuilder.newDocument();
 	    
-	    File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath());
+	    File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/SyncPipe/");
     	String contactsFileNameString = "contact.xml";
 
 		    try {

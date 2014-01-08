@@ -33,6 +33,7 @@ import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
+import android.os.Build;
 import android.os.Environment;
 import android.os.IBinder;
 import android.os.StatFs;
@@ -76,7 +77,7 @@ public class CreatePropertiesXML extends Service{
 	        		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 	        	    NetworkInfo Info = cm.getActiveNetworkInfo();
 	        		
-	        		 File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath());
+	        		 File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/SyncPipe/");
 	        		 File newfile = new File(dir, File.separator + propertiesFileNameString);
 	        			if(newfile.exists()){
 	        				newfile.delete();
@@ -100,7 +101,57 @@ public class CreatePropertiesXML extends Service{
 	        	            document.appendChild(rootElement);
 	        	            
 	        	            Element valueElement; 
+	        	            
+	        	            
+	        	            
+	        	            
+	        	            Element androidVersionElement = document.createElement("androidinfo");
+	        	            rootElement.appendChild(androidVersionElement);
+	        	            
+	        	            Integer androidVersion = Build.VERSION.SDK_INT;
+	        	            
+	        	            switch(androidVersion){
+	        	            	case 14:
+	        	            		valueElement = document.createElement("androidversion");
+	        	    	            androidVersionElement.appendChild(valueElement);
+	        	    			    valueElement.appendChild(document.createTextNode("4.0 ICE CREAME SANDWICH"));
+	        	            		break;
+	        	            	case 15:
+	        	            		valueElement = document.createElement("androidversion");
+	        	    	            androidVersionElement.appendChild(valueElement);
+	        	    			    valueElement.appendChild(document.createTextNode("4.03 ICE CREAME SANDWICH MR 1"));
+	        	            		break;
+	        	            	case 16:
+	        	            		valueElement = document.createElement("androidversion");
+	        	    	            androidVersionElement.appendChild(valueElement);
+	        	    			    valueElement.appendChild(document.createTextNode("4.1 JEALLY BEAN"));
+	        	            		break;
+	        	            	case 17:
+	        	            		valueElement = document.createElement("androidversion");
+	        	    	            androidVersionElement.appendChild(valueElement);
+	        	    			    valueElement.appendChild(document.createTextNode("4.2 JEALLY BEAN MR 1"));
+	        	            		break;
+	        	            	case 18:
+	        	            		valueElement = document.createElement("androidversion");
+	        	    	            androidVersionElement.appendChild(valueElement);
+	        	    			    valueElement.appendChild(document.createTextNode("4.3 JEALLY BEAN MR 2"));
+	        	            		break;
+	        	            	case 19:
+	        	            		valueElement = document.createElement("androidversion");
+	        	    	            androidVersionElement.appendChild(valueElement);
+	        	    			    valueElement.appendChild(document.createTextNode("4.4 KITKAT"));
+	        	            		break;
+	        	            	default:
+	        	            		valueElement = document.createElement("androidversion");
+	        	    	            androidVersionElement.appendChild(valueElement);
+	        	    			    valueElement.appendChild(document.createTextNode("older or newer version"));
+	        	            		break;
+	        	            
+	        	            }
+	        	            
 
+	        	            
+	        	            
 	        	            
 	        	            Element internetSignalElement = document.createElement("wifisignal");
 	        	            rootElement.appendChild(internetSignalElement);
@@ -112,7 +163,7 @@ public class CreatePropertiesXML extends Service{
 	        	            if (Info == null || !Info.isConnectedOrConnecting()) {
 	        	            	valueElement = document.createElement("wificonnection");
 	        	            	internetSignalElement.appendChild(valueElement);
-	        	    		    valueElement.appendChild(document.createTextNode("noWifiConnection"));
+	        	    		    valueElement.appendChild(document.createTextNode("no"));
 
 	        	    		    valueElement = document.createElement("mobileconnection");
 	        	    		    mobileSignalElement.appendChild(valueElement);
@@ -130,11 +181,11 @@ public class CreatePropertiesXML extends Service{
 	        	    	           
 	        	    	            valueElement = document.createElement("wificonnection");
 	        	    	            internetSignalElement.appendChild(valueElement);
-	        	    			    valueElement.appendChild(document.createTextNode("wifiConnection"));
+	        	    			    valueElement.appendChild(document.createTextNode("yes"));
 	        	    			    
 	        	    			    valueElement = document.createElement("mobileconnection");
 	        	    			    mobileSignalElement.appendChild(valueElement);
-	        	    			    valueElement.appendChild(document.createTextNode("no3GConnection because wifi is connected"));
+	        	    			    valueElement.appendChild(document.createTextNode("no3G Connection because wifi is connected"));
 
 	        	    	            
 	        	    	            WifiManager wifiManager = (WifiManager) getApplication().getSystemService(Context.WIFI_SERVICE);
@@ -150,7 +201,7 @@ public class CreatePropertiesXML extends Service{
 	        	    	            
 	        	    	            valueElement = document.createElement("wificonnection");
 	        	    	            internetSignalElement.appendChild(valueElement);
-	        	    			    valueElement.appendChild(document.createTextNode("noWifiConnection"));
+	        	    			    valueElement.appendChild(document.createTextNode("no"));
 	        	    			    
 	        	    			    valueElement = document.createElement("mobileconnection");
 	        	    			    mobileSignalElement.appendChild(valueElement);
@@ -266,8 +317,10 @@ public class CreatePropertiesXML extends Service{
 	        	    	    
 	        	    	 //nur JeallyBean
 	        	    	    
-	        	    	 /* 
-	        	    	  
+	        	    	 /*
+	        	    	  if(androidVersion >= 16){
+	        	    		  //this code will be executed on devices running on DONUT (NOT ICS) or later
+}
 	        	    	   stringToWrite=stringToWrite+"Signal Strength \n";
 	        	    	   
 	        	    	   
@@ -277,7 +330,7 @@ public class CreatePropertiesXML extends Service{
 	        	    	 CellInfoGsm cellinfogsm = (CellInfoGsm)telephonyManager.getAllCellInfo().get(0);
 	        	    	 CellSignalStrengthGsm cellSignalStrengthGsm = cellinfogsm.getCellSignalStrength();
 	        	    	 cellSignalStrengthGsm.getDbm();	
-	        	    	  */
+	        			}*/
 	        	    	    
 	        	    	 /*
 	        	    	    int strengthAmplitude = MyPhoneStateListener.getStrength();
@@ -360,8 +413,8 @@ public class CreatePropertiesXML extends Service{
 	        	            rootElement.appendChild(internalStorageElement);
 	        	    	    
 	        	    	    StatFs internalStatFs = new StatFs( Environment.getRootDirectory().getPath() );
-	        	    	    double internalTotal = ( internalStatFs.getBlockCount() * internalStatFs.getBlockSize() ) / 1048576;
-	        	    	    double internalFree = ( internalStatFs.getAvailableBlocks() * internalStatFs.getBlockSize() ) /  1048576;
+	        	    	    double internalTotal = ( internalStatFs.getBlockCount() * internalStatFs.getBlockSize() );
+	        	    	    double internalFree = ( internalStatFs.getAvailableBlocks() * internalStatFs.getBlockSize() );
 	        	    	       
 	        	    	      
 	        	    	    Double totalInternalStorage = internalTotal;
@@ -370,15 +423,15 @@ public class CreatePropertiesXML extends Service{
 	        	    	    
 	        	    	    valueElement = document.createElement("totalinternalstorage");
     	    	            internalStorageElement.appendChild(valueElement);
-    	    			    valueElement.appendChild(document.createTextNode(totalInternalStorage.toString()+" MB"));
+    	    			    valueElement.appendChild(document.createTextNode(totalInternalStorage.toString()));
     	    			    
     	    			    valueElement = document.createElement("freeinternalstorage");
     	    	            internalStorageElement.appendChild(valueElement);
-    	    			    valueElement.appendChild(document.createTextNode(freeInternalStorage.toString()+" MB"));
+    	    			    valueElement.appendChild(document.createTextNode(freeInternalStorage.toString()));
     	    			    
     	    			    valueElement = document.createElement("usedinternalstorage");
     	    	            internalStorageElement.appendChild(valueElement);
-    	    			    valueElement.appendChild(document.createTextNode(usedInternalStorage.toString()+" MB"));
+    	    			    valueElement.appendChild(document.createTextNode(usedInternalStorage.toString()));
 	        	    	    
 //	        	    	    System.out.println(freeInternalStorage);
 //	        	    	    System.out.println(totalInternalStorage);
@@ -395,21 +448,21 @@ public class CreatePropertiesXML extends Service{
 	        	    	    double sdAvailSize = (double)stat.getAvailableBlocks()* (double)stat.getBlockSize();
 	        	    	    double sdTotalSize = (double)stat.getBlockCount()*(double)stat.getBlockSize();
 	        	    	    
-	        	    	    Double totalSDSpaceInMB= sdTotalSize/1048576;
-	        	    	    Double freeSDSpaceInMB = sdAvailSize / 1048576;
+	        	    	    Double totalSDSpaceInMB= sdTotalSize;
+	        	    	    Double freeSDSpaceInMB = sdAvailSize;
 	        	    	    Double usedSDSpaceInMB= totalSDSpaceInMB-freeSDSpaceInMB;
 	        	    	    
 	        	    	    valueElement = document.createElement("totalsdstorage");
     	    	            sdCardStorageElement.appendChild(valueElement);
-    	    			    valueElement.appendChild(document.createTextNode(totalSDSpaceInMB.toString()+" MB"));
+    	    			    valueElement.appendChild(document.createTextNode(totalSDSpaceInMB.toString()));
     	    			    
     	    			    valueElement = document.createElement("freeinternalstorage");
     	    	            sdCardStorageElement.appendChild(valueElement);
-    	    			    valueElement.appendChild(document.createTextNode(freeSDSpaceInMB.toString()+" MB"));
+    	    			    valueElement.appendChild(document.createTextNode(freeSDSpaceInMB.toString()));
     	    			    
     	    			    valueElement = document.createElement("usedinternalstorage");
     	    	            sdCardStorageElement.appendChild(valueElement);
-    	    			    valueElement.appendChild(document.createTextNode(usedSDSpaceInMB.toString()+" MB"));
+    	    			    valueElement.appendChild(document.createTextNode(usedSDSpaceInMB.toString()));
 	        	    	    
 	        	    	    //Total Storage
 	        	    	    
@@ -422,15 +475,15 @@ public class CreatePropertiesXML extends Service{
 	        	    	    
 	        	            valueElement = document.createElement("totalstorage");
     	    	            totalStorageElement.appendChild(valueElement);
-    	    			    valueElement.appendChild(document.createTextNode(totalStorage.toString()+" MB"));
+    	    			    valueElement.appendChild(document.createTextNode(totalStorage.toString()));
     	    			    
     	    			    valueElement = document.createElement("totalfreestorage");
     	    	            totalStorageElement.appendChild(valueElement);
-    	    			    valueElement.appendChild(document.createTextNode(totalFreeStorage.toString()+" MB"));
+    	    			    valueElement.appendChild(document.createTextNode(totalFreeStorage.toString()));
     	    			    
     	    			    valueElement = document.createElement("totalusedstorage");
     	    	            totalStorageElement.appendChild(valueElement);
-    	    			    valueElement.appendChild(document.createTextNode(totalUsedStorage.toString()+" MB"));
+    	    			    valueElement.appendChild(document.createTextNode(totalUsedStorage.toString()));
 	        	    	    
 	        	    	    
 	        	    	    //RAM
@@ -469,6 +522,7 @@ public class CreatePropertiesXML extends Service{
 	        	    	    Integer temp = batteryStatus.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, -1);
 	        			    Integer voltage = batteryStatus.getIntExtra(BatteryManager.EXTRA_VOLTAGE, -1);
 	        			    Integer status = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+	        			    String  technology= batteryStatus.getExtras().getString(BatteryManager.EXTRA_TECHNOLOGY);
 	        	    	    
 	        	    	    valueElement = document.createElement("batteryvalue");
     	    	            batteryElement.appendChild(valueElement);
@@ -482,10 +536,27 @@ public class CreatePropertiesXML extends Service{
     	    	            batteryElement.appendChild(valueElement);
     	    			    valueElement.appendChild(document.createTextNode(voltage.toString()));
     	    			    
+    	    			    boolean isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
+    	    	                     status == BatteryManager.BATTERY_STATUS_FULL;
+    	    			    
+    	    			    String statusTextString;
+    	    			    
+    	    			    if(status == BatteryManager.BATTERY_STATUS_CHARGING ||
+    	    	                     status == BatteryManager.BATTERY_STATUS_FULL){
+    	    			    		statusTextString = "yes";
+    	    			    }
+    	    			    else {
+	    			    		statusTextString = "no";
+							}
+    	    			    
     	    			    valueElement = document.createElement("batterystatus");
     	    	            batteryElement.appendChild(valueElement);
-    	    			    valueElement.appendChild(document.createTextNode(status.toString()));
+    	    			    valueElement.appendChild(document.createTextNode(statusTextString));
 	        	    	    
+    	    			    valueElement = document.createElement("batterytechnology");
+    	    	            batteryElement.appendChild(valueElement);
+    	    			    valueElement.appendChild(document.createTextNode(technology));
+    	    			    
 	        	    	    
 	        	    	    
 	        	    	    

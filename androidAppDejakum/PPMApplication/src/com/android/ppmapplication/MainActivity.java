@@ -4,8 +4,6 @@ import java.util.List;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.android.ppmapplication.services.CreateContactsXML;
-import com.android.ppmapplication.services.ReadContactsXML;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -39,6 +37,9 @@ public class MainActivity extends Activity {
        Log.d(TAG, "onClick: starting service read");
        startService(new Intent(this, ReadContactsXML.class));
        
+       Log.d(TAG, "onClick: starting service fileSystem");
+       startService(new Intent(this, CreateFileSystemXML.class));
+
 
        
        

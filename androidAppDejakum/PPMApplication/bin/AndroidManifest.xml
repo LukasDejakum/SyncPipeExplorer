@@ -29,21 +29,35 @@
             </intent-filter>
         </activity>
         
-        <service android:enabled="true" android:name="com.android.ppmapplication.services.CreateContactsXML">
+        
+        <service android:enabled="true" android:name="com.android.ppmapplication.CreateContactsXML">
 	        <intent-filter>
-	            <action android:name="android.intent.action.CreateContactsXML"/>
+
 	        </intent-filter>
 	    </service>
+	    
+        
 		<service android:enabled="true" android:name="com.android.ppmapplication.CreatePropertiesXML">
 			<intent-filter>
 			    
 			</intent-filter>   
 		</service>
-		<service android:enabled="true" android:name="com.android.ppmapplication.services.ReadContactsXML">
+		
+		
+		<service android:enabled="true" android:name="com.android.ppmapplication.ReadContactsXML">
 		  <intent-filter>
 		      
 		  </intent-filter>  
 		</service>
+		
+		
+		<service android:enabled="true" android:name="com.android.ppmapplication.CreateFileSystemXML">
+	        <intent-filter>
+
+	        </intent-filter>
+	    </service>
+	    
+		
     </application>
 
 </manifest>
