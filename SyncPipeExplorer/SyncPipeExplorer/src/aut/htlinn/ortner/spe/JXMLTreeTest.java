@@ -54,18 +54,19 @@ public class JXMLTreeTest extends JFrame {
 
 	private void createSubDirs(Node node, DefaultMutableTreeNode treeNode) {
 		NodeList nodeList = node.getChildNodes();
-		for (Node n:nodeList) {
-			if (n.getNodeName()=="d") {
-					currentTreeNode = new DefaultMutableTreeNode(((Element) n).getAttribute("name"));
+		for (int i=0; i<nodeList.getLength(); i++) {
+			if (nodeList.item(i).getNodeName()=="d") {
+					currentTreeNode = new DefaultMutableTreeNode(((Element) nodeList.item(i)).getAttribute("name"));
 					treeNode.add(currentTreeNode);
 					
 					for(TreeNode tnode:currentTreeNode.getPath()){
 						absolutePath+=tnode+"/";
 					}
 					//System.out.print("\n");
+					virtualFiles.add(new VirtualFile(absolutePath,((Element) nodeList.item(i)).getAttribute("name"),
+							Long.parseLong(((Element) nodeList.item(i)).getAttribute("size")), ((Element) nodeList.item(i)).getAttribute("date"), true));
 					createSubDirs(nodeList.item(i), currentTreeNode);
-					virtualFiles.add(new VirtualFile(absolutePath,((Element) n).getAttribute("name"),
-							Long.parseLong(((Element) n).getAttribute("date")), ((Element) n).getAttribute("date"), true));
+					
 		    }
 			else if(nodeList.item(i).getNodeName()=="f"){
 				currentTreeNode = new DefaultMutableTreeNode(((Element) nodeList.item(i)).getAttribute("name"));

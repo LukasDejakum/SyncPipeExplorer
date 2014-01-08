@@ -7,7 +7,6 @@
 <fullyQualifiedTypeName name="org.omg.CORBA_2_3.portable.OutputStream"/>
 <fullyQualifiedTypeName name="java.io.BufferedWriter"/>
 <fullyQualifiedTypeName name="java.io.OutputStreamWriter"/>
-<fullyQualifiedTypeName name="aut.htlinn.ortner.spe.AndroidFilesHandler"/>
 <fullyQualifiedTypeName name="java.io.PrintWriter"/>
 <fullyQualifiedTypeName name="java.util.concurrent.TimeUnit"/>
 <fullyQualifiedTypeName name="java.nio.file.DirectoryStream"/>
@@ -34,7 +33,6 @@
 <fullyQualifiedTypeName name="aut.htlinn.ortner.spe.JXMLTreeTest"/>
 <fullyQualifiedTypeName name="java.awt.Dimension"/>
 <fullyQualifiedTypeName name="javax.swing.tree.DefaultTreeModel"/>
-<fullyQualifiedTypeName name="javax.swing.JScrollPane"/>
 <fullyQualifiedTypeName name="javax.swing.JTable"/>
 <fullyQualifiedTypeName name="aut.htlinn.ortner.spe.gui.FileTable"/>
 <fullyQualifiedTypeName name="java.io.File"/>
@@ -42,4 +40,11 @@
 <fullyQualifiedTypeName name="javax.swing.table.DefaultTableModel"/>
 <fullyQualifiedTypeName name="javax.swing.tree.DefaultMutableTreeNode"/>
 <fullyQualifiedTypeName name="aut.htlinn.ortner.spe.VirtualFile"/>
+<fullyQualifiedTypeName name="java.awt.Color"/>
+<fullyQualifiedTypeName name="aut.htlinn.ortner.spe.gui.ContactsTable"/>
+<fullyQualifiedTypeName name="aut.htlinn.ortner.spe.AndroidFilesHandler"/>
+<fullyQualifiedTypeName name="org.w3c.dom.NodeList"/>
+<fullyQualifiedTypeName name="aut.htlinn.ortner.spe.ContactChangedListener"/>
+<fullyQualifiedTypeName name="javax.swing.JScrollPane"/>
+<fullyQualifiedTypeName name="java.awt.FlowLayout"/>
 </qualifiedTypeNameHistroy>

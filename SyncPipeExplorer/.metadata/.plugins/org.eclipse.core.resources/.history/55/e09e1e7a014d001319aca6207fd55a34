@@ -1,0 +1,14 @@
+package aut.htlinn.ortner.spe;
+
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+
+public class ContactChangedListener implements TableModelListener {
+
+	@Override
+	public void tableChanged(TableModelEvent arg0) {
+		System.out.println("Data changed");
+
+	}
+
+}

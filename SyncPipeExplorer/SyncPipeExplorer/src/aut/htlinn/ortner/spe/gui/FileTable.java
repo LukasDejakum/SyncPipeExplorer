@@ -5,47 +5,23 @@ import java.io.File;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-public class FileTable {
+public class FileTable extends JTable{
 
-	private JTable table = new JTable();
-	
 	//Pfad aus dem JTree übergeben und in XML Datei suchen, liste (String) übergeben
-	public FileTable(String[] files){
+	public FileTable(String path){
 		//symbol, name, dir or file, size, date
-
+		
+		File[] files = new File(path).listFiles();
+		
 		Object[][] data = new Object[files.length][4];
 		String[] columnNames = {"Name", "Art", "Groesse","Datum"};
 		for(int i=0; i<files.length; i++){
 			
 		}
 		DefaultTableModel model = new DefaultTableModel(data, columnNames);
-        table = new JTable(model) {
-
-            private static final long serialVersionUID = 1L;
-
-            /*@Override
-            public Class getColumnClass(int column) {
-            return getValueAt(0, column).getClass();
-            }*/
-            @Override
-            public Class getColumnClass(int column) {
-                switch (column) {
-                    case 0:
-                        return String.class;
-                    case 1:
-                        return String.class;
-                    case 2:
-                        return Boolean.class;
-                    default:
-                        return String.class;
-                }
-            }
-//            @Override
-//            public boolean isCellEditable(int rowIndex, int colIndex) {
-//                return (colIndex == CHECK_COL);
-//            }
-        };
+        this.setModel(model);
 	}
+
 	public void update(){
 		
 	}

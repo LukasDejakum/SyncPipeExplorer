@@ -1,0 +1,107 @@
+package aut.htlinn.ortner.spe.gui;
+
+import java.awt.Container;
+import java.io.File;
+import java.io.IOException;
+
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import aut.htlinn.ortner.spe.AndroidFilesHandler;
+
+public class ContactsTable extends JTable implements Runnable{
+
+	private Container container;
+	private Document document;
+	
+	public ContactsTable(Container container) throws ParserConfigurationException, SAXException, IOException{
+    	this.container=container;
+	}
+	@Override
+	public void run() {
+		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+    	DocumentBuilder docBuilder;
+    	
+		try {
+			docBuilder = docBuilderFactory.newDocumentBuilder();
+			document = docBuilder.parse(AndroidFilesHandler.getContactsFile());
+			readContacts(document.getDocumentElement());
+			container.add(this);
+		} catch (SAXException | IOException e) {
+			e.printStackTrace();
+		}
+		catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		}
+		
+		NodeList contacts = document.getElementsByTagName("contact");
+		NodeList childNodes;
+		
+		for(int i=0; i<contacts.getLength(); i++){
+			childNodes = contacts.item(i).getChildNodes();
+			for(int j=0; j<contacts.item(i).getChildNodes().getLength(); j++){
+				System.out.println(childNodes.item(j).getNodeName());
+			}
+		}
+		
+		
+//		File[] files = new File(pathToFile).listFiles();
+//		
+//		Object[][] data = new Object[files.length][4];
+//		String[] columnNames = {"Name", "Art", "Groesse","Datum"};
+//		for(int i=0; i<files.length; i++){
+//			
+//		}
+//		DefaultTableModel model = new DefaultTableModel(data, columnNames);
+//        this.setModel(model);
+		container.add(this);
+	}
+	private void readContacts(Node node){
+		
+	}
+//    public DeviceFileTree() throws ParserConfigurationException, SAXException, IOException{
+//    	DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+//    	DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+//    	Document document = docBuilder.parse(new File("files/test.xml"));
+//    	DefaultMutableTreeNode root = new DefaultMutableTreeNode("root");
+//    	setModel(new DefaultTreeModel(root));
+//    	createSubDirs(document.getDocumentElement(),root);
+//    }
+//    public static void main(String[] args){
+//    	try {
+//			new DeviceFileTree();
+//		} catch (ParserConfigurationException e) {
+//			e.printStackTrace();
+//		} catch (SAXException e) {
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//    }
+//
+//private void createSubDirs(Node node, DefaultMutableTreeNode treeNode) {
+//	NodeList nodeList = node.getChildNodes();
+//	for (int i = 0; i < nodeList.getLength(); i++) {
+//		
+//		if (nodeList.item(i).getNodeName()=="d") {
+//				currentTreeNode = new DefaultMutableTreeNode(((Element) nodeList.item(i)).getAttribute("name"));
+//				treeNode.add(currentTreeNode);
+//				createSubDirs(nodeList.item(i), currentTreeNode);
+//	    }
+//		else if(nodeList.item(i).getNodeName()=="f"){
+//			treeNode.add(new DefaultMutableTreeNode(((Element) nodeList.item(i)).getAttribute("name")));
+//		}
+//	}
+//}
+}

@@ -1,0 +1,115 @@
+package aut.htlinn.ortner.spe.gui;
+
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.io.IOException;
+
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import aut.htlinn.ortner.spe.AndroidFilesHandler;
+
+public class ContactsTable extends JTable implements Runnable{
+
+	private Container container;
+	private Document document;
+	
+	public ContactsTable(Container container) throws ParserConfigurationException, SAXException, IOException{
+    	this.container=container;
+	}
+	@Override
+	public void run() {
+		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+    	DocumentBuilder docBuilder;
+    	
+		try {
+			docBuilder = docBuilderFactory.newDocumentBuilder();
+			document = docBuilder.parse(AndroidFilesHandler.getContactsFile());
+			readContacts(document.getDocumentElement());
+			container.add(this);
+		} catch (SAXException | IOException e) {
+			e.printStackTrace();
+		}
+		catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		}
+		
+		NodeList contacts = document.getElementsByTagName("contact");
+		NodeList childNodes;
+		
+		Object[][] data = new Object[contacts.getLength()][4];
+		
+		for(int i=0; i<contacts.getLength(); i++){
+			childNodes = contacts.item(i).getChildNodes();
+			System.out.println("Kontakt: ");
+			for(int j=0; j<contacts.item(i).getChildNodes().getLength(); j++){
+				if(childNodes.item(j).getNodeName().equals("surename")){
+					System.out.println(((Element) childNodes.item(j)).getAttribute("value"));
+					data[i][0] = ((Element) childNodes.item(j)).getAttribute("value");
+				}
+				else if(childNodes.item(j).getNodeName().equals("number")){
+					System.out.println(((Element) childNodes.item(j)).getAttribute("value"));
+					data[i][2] = ((Element) childNodes.item(j)).getAttribute("value");
+				}
+				else if(childNodes.item(j).getNodeName().equals("eMail")){
+					System.out.println(((Element) childNodes.item(j)).getAttribute("value"));
+					data[i][3] = ((Element) childNodes.item(j)).getAttribute("value");
+				}
+			}
+			System.out.println("\n");
+		}
+		String[] columnNames = {"Vorname", "Nachname", "Nummer","eMail"};
+		DefaultTableModel model = new DefaultTableModel(data, columnNames);
+		this.setSize(container.getSize());
+		this.setModel(model);
+		container.setLayout(new java.awt.BorderLayout());
+		container.add(new JScrollPane(this), BorderLayout.CENTER);
+	}
+	private void readContacts(Node node){
+		
+	}
+//    public DeviceFileTree() throws ParserConfigurationException, SAXException, IOException{
+//    	DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+//    	DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+//    	Document document = docBuilder.parse(new File("files/test.xml"));
+//    	DefaultMutableTreeNode root = new DefaultMutableTreeNode("root");
+//    	setModel(new DefaultTreeModel(root));
+//    	createSubDirs(document.getDocumentElement(),root);
+//    }
+//    public static void main(String[] args){
+//    	try {
+//			new DeviceFileTree();
+//		} catch (ParserConfigurationException e) {
+//			e.printStackTrace();
+//		} catch (SAXException e) {
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//    }
+//
+//private void createSubDirs(Node node, DefaultMutableTreeNode treeNode) {
+//	NodeList nodeList = node.getChildNodes();
+//	for (int i = 0; i < nodeList.getLength(); i++) {
+//		
+//		if (nodeList.item(i).getNodeName()=="d") {
+//				currentTreeNode = new DefaultMutableTreeNode(((Element) nodeList.item(i)).getAttribute("name"));
+//				treeNode.add(currentTreeNode);
+//				createSubDirs(nodeList.item(i), currentTreeNode);
+//	    }
+//		else if(nodeList.item(i).getNodeName()=="f"){
+//			treeNode.add(new DefaultMutableTreeNode(((Element) nodeList.item(i)).getAttribute("name")));
+//		}
+//	}
+//}
+}

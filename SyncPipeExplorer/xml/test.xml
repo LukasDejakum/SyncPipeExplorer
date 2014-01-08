@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8"?><smartphoneinformations>
+<wifisignal>
+<wificonnection value="noWifiConnection"/>
+</wifisignal>
+<mobilesignal/>
+<contactlist>
+<contact index="1">
+<surename value="Florian Stingl"/>
+<eMail value="flostingl@gmail.com"/>
+</contact>
+<contact index="2">
+<surename value="Albert Greinoecker"/>
+<number value="069911959513"/>
+</contact>
+<contact index="3">
+<surename value="Apple Inc."/>
+<number value="1-800-MY-APPLE"/>
+</contact>
+<contact index="4">
+<surename value="Lukas Dejakum"/>
+</contact>
+<contact index="5">
+<surename value="Mitzi"/>
+<number value="+436643550812"/>
+</contact>
+<contact index="6">
+<surename value="Nigg"/>
+<number value="+436504324014"/>
+</contact>
+<contact index="7">
+<surename value="Ale"/>
+<number value="+436504576194"/>
+<number value="+436604011148"/>
+</contact>
+<contact index="8">
+<surename value="Pitschi"/>
+<number value="+436766620188"/>
+</contact>
+<contact index="9">
+<surename value="Bernny"/>
+<number value="+436801100022"/>
+</contact>
+<contact index="10">
+<surename value="Domi Santela"/>
+<number value="+436602324637"/>
+</contact>
+<contact index="11">
+<surename value="Geir"/>
+<number value="+436765943582"/>
+</contact>
+<contact index="12">
+<surename value="Nigg"/>
+<number value="0681 10761678"/>
+</contact>
+<contact index="13">
+<surename value="3ServiceTeam"/>
+<number value="+43660303030"/>
+</contact>
+<contact index="14">
+<surename value="Florian"/>
+<number value="+4369911807667"/>
+</contact>
+<contact index="15">
+<surename value="steidl@htlinn.ac.at"/>
+<eMail value="steidl@htlinn.ac.at"/>
+</contact>
+<contact index="16">
+<surename value="Conny (Cosine)"/>
+<number value="0699 18171184"/>
+<number value="069-918-171184"/>
+</contact>
+<contact index="17">
+<surename value="Pocket"/>
+<eMail value="add@getpocket.com"/>
+</contact>
+<contact index="18">
+<surename value="Klotz"/>
+<number value="+436649151167"/>
+</contact>
+<contact index="19">
+<surename value="mr_supermx"/>
+<eMail value="mr_supermx@hotmail.com"/>
+</contact>
+<contact index="20">
+<surename value="Sabse"/>
+<number value="+4369910083434"/>
+</contact>
+<contact index="21">
+<surename value="Marco P."/>
+<number value="066-492-03005"/>
+</contact>
+<contact index="22">
+<surename value="Hoheneder"/>
+<number value="+436645306386"/>
+</contact>
+<contact index="23">
+<surename value="Haslwanter Mani"/>
+<number value="+436645401990"/>
+</contact>
+<contact index="24">
+<surename value="Kraus"/>
+<number value="065-047-33239"/>
+</contact>
+<contact index="25">
+<surename value="Tizi"/>
+<number value="06767735728"/>
+<number value="+436506343122"/>
+<number value="067-677-35728"/>
+</contact>
+<contact index="27">
+<surename value="Skischule"/>
+<number value="065-072-54001"/>
+</contact>
+<contact index="28">
+<surename value="Vali"/>
+<number value="069-910-453353"/>
+</contact>
+<contact index="29">
+<surename value="Rebecca"/>
+<number value="066-458-39770"/>
+</contact>
+<contact index="30">
+<surename value="dgumhalter@gmail.com"/>
+<eMail value="dgumhalter@gmail.com"/>
+</contact>
+<contact index="31">
+<surename value="Andi Walser"/>
+<number value="+436506869252"/>
+</contact>
+<contact index="32">
+<surename value="Lukas Dejakum"/>
+<eMail value="lukas.dejakum@aol.com"/>
+</contact>
+<contact index="33">
+<surename value="Pfurtschi"/>
+<number value="+436509273141"/>
+</contact>
+<contact index="34">
+<surename value="Silvio"/>
+<number value="+436765502721"/>
+</contact>
+<contact index="35">
+<surename value="3"/>
+<number value="+43660303034"/>
+</contact>
+<contact index="36">
+<surename value="Luggi"/>
+</contact>
+<contact index="37">
+<surename value="Feichter"/>
+<number value="+436607686763"/>
+</contact>
+<contact index="38">
+<surename value="3Box"/>
+<number value="+43660303060"/>
+</contact>
+<contact index="39">
+<surename value="Schneider"/>
+<number value="+436641587858"/>
+</contact>
+<contact index="40">
+<surename value="Flo"/>
+<number value="+436604779888"/>
+</contact>
+<contact index="41">
+<surename value="Taxi Schöpf"/>
+<number value="066-431-16484"/>
+</contact>
+<contact index="42">
+<surename value="Flogga"/>
+<number value="066-418-64037"/>
+</contact>
+<contact index="43">
+<surename value="Rici"/>
+<number value="065-034-39001"/>
+</contact>
+<contact index="44">
+<surename value="Gritschi"/>
+<number value="+436643788585"/>
+</contact>
+<contact index="45">
+<surename value="Hans"/>
+<number value="+436507254003"/>
+</contact>
+<contact index="46">
+<surename value="Benni"/>
+<number value="+43 664 2079539"/>
+<number value="+436642079539"/>
+<number value="+436803322717"/>
+</contact>
+<contact index="47">
+<surename value="Michi"/>
+<number value="068-011-19044"/>
+</contact>
+<contact index="48">
+<surename value="Viki"/>
+<number value="065-036-11545"/>
+</contact>
+<contact index="49">
+<surename value="Martin"/>
+<number value="+436649229393"/>
+</contact>
+<contact index="50">
+<surename value="Get (Hans Peter)"/>
+<number value="065-051-12741"/>
+</contact>
+<contact index="51">
+<surename value="Get (Walter)"/>
+<number value="066-462-56681"/>
+</contact>
+<contact index="52">
+<surename value="3Auskunft"/>
+<number value="11-883-3"/>
+</contact>
+<contact index="53">
+<surename value="Mani"/>
+<number value="067-635-18071"/>
+</contact>
+<contact index="54">
+<surename value="Sarah L."/>
+<number value="069-918-176655"/>
+</contact>
+<contact index="55">
+<surename value="JD"/>
+<number value="066-427-35858"/>
+</contact>
+<contact index="56">
+<surename value="Oma"/>
+<number value="052-736-417"/>
+</contact>
+<contact index="57">
+<surename value="Pati"/>
+<number value="066-416-70009"/>
+</contact>
+<contact index="58">
+<surename value="Luggi H."/>
+<number value="066-430-18422"/>
+</contact>
+<contact index="59">
+<surename value="Gegi"/>
+<number value="065-080-80654"/>
+</contact>
+<contact index="60">
+<surename value="kraschi"/>
+<number value="+436641676833"/>
+</contact>
+<contact index="61">
+<surename value="Sabbi"/>
+<number value="065-041-69441"/>
+</contact>
+<contact index="62">
+<surename value="Papa"/>
+<number value="065-036-11570"/>
+</contact>
+<contact index="63">
+<surename value="Harry"/>
+<number value="066-421-72886"/>
+</contact>
+<contact index="64">
+<surename value="Ortna"/>
+<number value="066-048-88903"/>
+<eMail value="alexander.ortner@students.htlinn.ac.at"/>
+</contact>
+<contact index="65">
+<surename value="Sarah R."/>
+<number value="069-910-501904"/>
+</contact>
+<contact index="66">
+<surename value="Mari"/>
+<number value="066-479-88518"/>
+</contact>
+<contact index="67">
+<surename value="Luggi W."/>
+<number value="067-666-49138"/>
+</contact>
+<contact index="68">
+<surename value="Jonny"/>
+<number value="069-911-552201"/>
+<eMail value="johannes.zelger@students.htlinn.ac.at"/>
+</contact>
+<contact index="69">
+<surename value="Hinti"/>
+<number value="066-459-20591"/>
+</contact>
+<contact index="70">
+<surename value="Waudla"/>
+<number value="066-463-43677"/>
+</contact>
+<contact index="71">
+<surename value="Hotta"/>
+<number value="+436508099400"/>
+<eMail value="alexander.hotter@students.htlinn.ac.at"/>
+</contact>
+<contact index="72">
+<surename value="skirettung"/>
+<number value="000-522-68141345"/>
+</contact>
+<contact index="73">
+<surename value="Marko C."/>
+<number value="068-023-22904"/>
+</contact>
+<contact index="74">
+<surename value="Lawasch"/>
+<number value="052-256-2307"/>
+</contact>
+<contact index="75">
+<surename value="Manu"/>
+<number value="065-084-90442"/>
+</contact>
+<contact index="76">
+<surename value="Lisa"/>
+<number value="067-690-23636"/>
+</contact>
+<contact index="77">
+<surename value="Auma"/>
+<number value="+4366475013447"/>
+</contact>
+<contact index="78">
+<surename value="Can"/>
+<number value="0660 5051775"/>
+<number value="066-029-06664"/>
+<number value="0660 2906664"/>
+<number value="066-050-51775"/>
+</contact>
+<contact index="79">
+<surename value="Maia"/>
+<number value="066-495-43742"/>
+</contact>
+<contact index="80">
+<surename value="Max"/>
+<number value="066-055-53474"/>
+</contact>
+<contact index="81">
+<surename value="Mama"/>
+<number value="+436648322062"/>
+</contact>
+<contact index="82">
+<surename value="maci.m4a@gmail.com"/>
+<eMail value="maci.m4a@gmail.com"/>
+</contact>
+<contact index="83">
+<surename value="basri.hasan61@gmail.com"/>
+<eMail value="basri.hasan61@gmail.com"/>
+</contact>
+<contact index="84">
+<surename value="Evi"/>
+<number value="065-083-04202"/>
+</contact>
+<contact index="85">
+<surename value="Russa"/>
+<number value="066-415-90890"/>
+</contact>
+<contact index="86">
+<surename value="Schönherr"/>
+<number value="+4366475039013"/>
+</contact>
+<contact index="87">
+<surename value="Chrisse"/>
+<number value="069-919-950329"/>
+</contact>
+<contact index="88">
+<surename value="David Hinterlechner"/>
+<number value="+436649728979"/>
+</contact>
+<contact index="89">
+<surename value="Wieser"/>
+<number value="066-049-46802"/>
+</contact>
+<contact index="90">
+<surename value="Marcel"/>
+<number value="069-917-125391"/>
+</contact>
+<contact index="91">
+<surename value="Mogga"/>
+<number value="065-020-16465"/>
+</contact>
+<contact index="92">
+<surename value="Gumpold"/>
+<number value="066-491-96042"/>
+</contact>
+<contact index="93">
+<surename value="w.dejakum@aon.at"/>
+<eMail value="w.dejakum@aon.at"/>
+</contact>
+<contact index="94">
+<surename value="Maximilian.Blunder@students.htlinn.ac.at"/>
+<eMail value="Maximilian.Blunder@students.htlinn.ac.at"/>
+</contact>
+<contact index="95">
+<surename value="David"/>
+<number value="066-436-02268"/>
+</contact>
+<contact index="96">
+<surename value="Nocker"/>
+<number value="+436641228072"/>
+</contact>
+<contact index="97">
+<surename value="Taxi Schwab"/>
+<number value="052-262-877"/>
+</contact>
+<contact index="98">
+<surename value="Rooney"/>
+<number value="067-695-34409"/>
+</contact>
+<contact index="206">
+<surename value="Kiefer"/>
+<number value="0512 575723"/>
+</contact>
+<contact index="208">
+<surename value="Karim"/>
+<number value="06605499663"/>
+</contact>
+<contact index="320">
+<surename value="Mogga"/>
+<number value="+43 664 4202747"/>
+</contact>
+</contactlist>
+</smartphoneinformations>

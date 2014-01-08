@@ -2,59 +2,43 @@ package aut.htlinn.ortner.spe;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class AndroidFilesHandler {
+public class AndroidFilesHandler extends Thread{
 
-	public void getAndroidFiles(){
-		ArrayList<String> commands = new ArrayList<String>();
-		ProcessBuilder pb;
-		Process p;
-		ArrayList<String> dirs = new ArrayList<String>();
-		try {
+	private static ArrayList<String> commands = new ArrayList<String>();
+	private static ProcessBuilder pb;
+	private static Process p;
+	ArrayList<String> dirs = new ArrayList<String>();
 
-			System.out.println("Requesting Files...");
-			pb = new ProcessBuilder("cmd.exe");
-			pb.redirectErrorStream();
-			//			pb.redirectOutput(new File("files/output.txt"));
-			p = pb.start();
-			BufferedWriter p_stdin = new BufferedWriter(new OutputStreamWriter(p.getOutputStream()));
-			Scanner s = new Scanner(p.getInputStream());
-
-			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			String line;
-
-			p_stdin.write("cd M:/Dropbox/Diplomarbeit_Dejakum_Ortner/Code/Code_Desktop/ADB/adb.exe\n");
-			p_stdin.write("adb shell\n");
-			p_stdin.write("ls -d */ > /sdcard/temp.txt\n");
-			p_stdin.write("exit\n");
-			p_stdin.flush();
-			Thread.sleep(1000);
-//			p_stdin.write("M:/Dropbox/Diplomarbeit_Dejakum_Ortner/Code/Code_Desktop/ADB/adb.exe\n");
-			p_stdin.write("adb pull /sdcard/temp.txt M:/ \n");
-			p_stdin.flush();
-
-			while ((line = br.readLine()).length()<100000) {
-				System.out.println(line);
+	public static File getContactsFile(){
+		commands.clear();
+		File contactsFile = new File("C:/contacts.xml");
+		System.out.println("getting xml file");
+		long firstSize=0;
+		long secondSize=0;;
+		ProcessBuilder pb = new ProcessBuilder("D:/Dropbox/Diplomarbeit_Dejakum_Ortner/Code/Code_Desktop/ADB/adb.exe", "pull",  "/storage/sdcard0/contacts.xml", "C:/");
+		do{
+			firstSize=contactsFile.length();
+			try {
+				p = pb.start();
+				p.waitFor();
+				System.out.println(secondSize);
+				Thread.sleep(100);
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
-
-			System.out.println("after while");
-			p_stdin.close();
-			s.close();
-			br.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-		System.out.println("Fertig");
+			secondSize=contactsFile.length();
+			//if file size changed -> app is still creating the file
+		}while(firstSize != secondSize);
+		System.out.println("got xml file");
+		return contactsFile;
 	}
 }
-
-// if (out == null) write("cd..")
-//else readFiles();

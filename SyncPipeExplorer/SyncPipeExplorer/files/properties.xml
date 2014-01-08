@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "properties.dtd">
+<properties>
+<androidinfo>
+<androidversion>17</androidversion>
+</androidinfo>
+<wifisignal>
+<wificonnection>noWifiConnection</wificonnection>
+</wifisignal>
+<mobilesignal>
+<mobileconnection>GPRS/3G connection</mobileconnection>
+<mobilesubtype>NETWORK TYPE UMTS (3G) Speed: 0.4-7 Mbps</mobilesubtype>
+<mobilesubtype>NETWORK TYPE EHRPD</mobilesubtype>
+<mobilesubtype>NETWORK_TYPE_EVDO_B</mobilesubtype>
+<mobilesubtype>NETWORK TYPE HSPA+ (4G) Speed: 10-20 Mbps</mobilesubtype>
+<mobilesubtype>NETWORK TYPE IDEN</mobilesubtype>
+<mobilesubtype>NETWORK TYPE LTE (4G) Speed: 10+ Mbps</mobilesubtype>
+</mobilesignal>
+<internalstorage>
+<totalinternalstorage>5.2842496E8</totalinternalstorage>
+<freeinternalstorage>1.5804416E8</freeinternalstorage>
+<usedinternalstorage>3.703808E8</usedinternalstorage>
+</internalstorage>
+<sdcardstorage>
+<totalsdstorage>1.2332314624E10</totalsdstorage>
+<freeinternalstorage>1.0399166464E10</freeinternalstorage>
+<usedinternalstorage>1.93314816E9</usedinternalstorage>
+</sdcardstorage>
+<totalstorage>
+<totalstorage>1.2860739584E10</totalstorage>
+<totalfreestorage>1.0557210624E10</totalfreestorage>
+<totalusedstorage>2.30352896E9</totalusedstorage>
+</totalstorage>
+<ram>
+<totalram>954 MB</totalram>
+<freeram>480 MB</freeram>
+<usedram>474 MB</usedram>
+</ram>
+<battery>
+<batteryvalue>52</batteryvalue>
+<batterytemperature>320</batterytemperature>
+<batteryvoltage>3718</batteryvoltage>
+<batterystatus>battery is not charging</batterystatus>
+<batterytechnology>Li-ion</batterytechnology>
+</battery>
+</properties>

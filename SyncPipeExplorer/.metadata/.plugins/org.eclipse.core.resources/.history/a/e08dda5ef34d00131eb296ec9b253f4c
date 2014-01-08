@@ -1,0 +1,155 @@
+package aut.htlinn.ortner.spe.gui;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.EventQueue;
+import java.awt.FlowLayout;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Image;
+import java.awt.Label;
+import java.awt.Toolkit;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import java.awt.BorderLayout;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.DirectoryIteratorException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JMenuBar;
+import javax.swing.JMenu;
+import javax.swing.JButton;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTree;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
+
+import aut.htlinn.ortner.spe.AndroidFilesHandler;
+import aut.htlinn.ortner.spe.PortListener;
+
+public class SyncPipeExplorerGUI {
+
+	private JFrame frame;
+	private JTree fileTree = new JTree();
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					doPortListening();
+					SyncPipeExplorerGUI window = new SyncPipeExplorerGUI();
+					window.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the application.
+	 * @throws IOException 
+	 * @throws SAXException 
+	 * @throws ParserConfigurationException 
+	 */
+	public SyncPipeExplorerGUI() throws ParserConfigurationException, SAXException, IOException {
+		initialize();
+	}
+
+	/**
+	 * Initialize the contents of the frame.
+	 * @throws IOException 
+	 * @throws SAXException 
+	 * @throws ParserConfigurationException 
+	 */
+	private void initialize() throws ParserConfigurationException, SAXException, IOException {
+		frame = new JFrame();
+		//frame.setBounds(100, 100, 650, 500);
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		GraphicsDevice device;
+		device =ge.getDefaultScreenDevice();
+		
+		if(device.isFullScreenSupported()){
+            device.setFullScreenWindow(frame);
+		}
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		JPanel infoPanel = new JPanel();
+		infoPanel.setPreferredSize(new Dimension(100,frame.getHeight()));
+		frame.add(infoPanel, BorderLayout.EAST);
+		
+		JPanel filePanel = new JPanel();
+		filePanel.setLayout(new FlowLayout());
+		//filePanel.setPreferredSize(new Dimension (500,500));
+		
+		JLabel label;
+		ArrayList<String> imgs = searchForImages(FileSystems.getDefault().getPath("D:/Pictures/Skifoan/Step Up Wächte"));
+		for(String img:imgs){
+			label = new JLabel(img, new ImageIcon(Toolkit.getDefaultToolkit().getImage(new File(img)
+			.getAbsolutePath()).getScaledInstance(80, 80, Image.SCALE_FAST)), JLabel.CENTER);
+			label.setPreferredSize(new Dimension(100,100));
+			filePanel.add(label);
+		}
+		//filePanel.add(new FileTable("M:/Bilder/Stubai_kicker"));
+
+		//Thread createContacts = new Thread(new ContactsTable(filePanel));
+		//createContacts.start();
+		
+		DeviceFileTree deviceTree = new DeviceFileTree();
+		deviceTree.expandPath(new TreePath(deviceTree.getModel().getRoot()));
+		
+		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, new JScrollPane(deviceTree), new JScrollPane(filePanel));
+		splitPane.setDividerLocation(300);
+		frame.add(splitPane, BorderLayout.CENTER);
+
+		JMenuBar menuBar = new JMenuBar();
+		frame.setJMenuBar(menuBar);
+		
+		JButton btnInfo = new JButton("Info");
+		menuBar.add(btnInfo);
+	}
+
+	private static void doPortListening(){
+		Thread portListener = new Thread(new PortListener());
+		portListener.start();	
+	}
+	private ArrayList<String> searchForImages(Path path){ 
+//		GIF, JPEG, PNG
+		ArrayList<String> imgs = new ArrayList<String>();
+		if(new File(path.toString()).isDirectory()){
+			try{ 
+				DirectoryStream<Path> stream = Files.newDirectoryStream(path, "*.{gif,jpeg,png,jpg}");
+			    for (Path file: stream) {
+			    	System.out.println(file.toAbsolutePath()+file.getFileName().toString());
+			        imgs.add(file.toAbsolutePath().toString());
+			    }
+			} catch (IOException e) {
+			    // IOException can never be thrown by the iteration.
+			    // In this snippet, it can only be thrown by newDirectoryStream.
+			    System.err.println(e);
+			}
+		}
+		else{
+			System.out.println("Path is not a directory");
+		}
+		return imgs;
+	}
+
+}
