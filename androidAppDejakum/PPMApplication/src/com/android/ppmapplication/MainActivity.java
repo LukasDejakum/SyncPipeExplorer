@@ -1,5 +1,6 @@
 package com.android.ppmapplication;
 
+import java.io.File;
 import java.util.List;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -7,6 +8,7 @@ import org.w3c.dom.NodeList;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.Contacts;
 import android.app.Activity;
 import android.content.ContentValues;
@@ -25,7 +27,15 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		SensorManager mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
+		
+		File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/SyncPipe/");
+
+		
+		if(dir.exists()){
+			dir.delete();
+		}
+		
+		dir.mkdir();
 
             
        Log.d(TAG, "onClick: starting service contacts");
@@ -33,39 +43,15 @@ public class MainActivity extends Activity {
        
        Log.d(TAG, "onClick: starting service properties");
        startService(new Intent(this, CreatePropertiesXML.class));               
-            
-       Log.d(TAG, "onClick: starting service read");
-       startService(new Intent(this, ReadContactsXML.class));
        
        Log.d(TAG, "onClick: starting service fileSystem");
        startService(new Intent(this, CreateFileSystemXML.class));
 
-
-       
-       
-       
-       List<Sensor> sensorList = mSensorManager.getSensorList(Sensor.TYPE_ALL);
-
-	    Log.w(TAG, "sl size = " + sensorList.size());
-	    for(int i=0;i<sensorList.size();i++) {
-	        Log.w(TAG, "sn = " + sensorList.get(i).getName());
-	    }
-
-	    
-	    
-	    
-	    
-	    
-	    
-  
-	  
-	    
-	    
-	    
-
-		    	
+       Log.d(TAG, "onClick: starting service read");
+       startService(new Intent(this, ReadContactsXML.class));
 	}
 
+	//NUR mit Temperature Sensor
       
 	  /*  private final SensorEventListener TemperatureSensorListener
 	     = new SensorEventListener(){
@@ -109,14 +95,14 @@ public class MainActivity extends Activity {
 		return true;
 	}
 	
-	private void createSubDirs(Node node) {
+	/*private void createSubDirs(Node node) {
 		NodeList nodeList = node.getChildNodes();
 		Log.i(TAG,Integer.toString(nodeList.getLength()));
 		Log.i(TAG, nodeList.item(0).getNodeName());
 		//Log.i(TAG, nodeList.item(index))
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			
-		/*	
+			
 			if (nodeList.item(i).getNodeName()=="d") {
 					currentTreeNode = new DefaultMutableTreeNode(((Element) nodeList.item(i)).getAttribute("name"));
 					treeNode.add(currentTreeNode);
@@ -125,40 +111,10 @@ public class MainActivity extends Activity {
 			else if(nodeList.item(i).getNodeName()=="f"){
 				treeNode.add(new DefaultMutableTreeNode(((Element) nodeList.item(i)).getAttribute("name")));
 			}
-		*/
-		}
-	}
-	
-	
-	@SuppressWarnings("deprecation")
-	private void createNewContact(String nameString, String numberString){
 		
-		ContentValues personValues = new ContentValues();
-		personValues.put(Contacts.People.NAME, nameString);
-		/* STARRED 0 = Contacts, 1 = Favorites */
-//		personValues.put(Contacts.People.STARRED, 1);
-
-		Uri newPersonUri = Contacts.People
-		  .createPersonInMyContactsGroup(getContentResolver(), personValues);
-
-		if (newPersonUri != null) {
-
-			ContentValues mobileValues = new ContentValues();
-			Uri mobileUri = Uri.withAppendedPath(newPersonUri,
-					Contacts.People.Phones.CONTENT_DIRECTORY);
-			mobileValues.put(Contacts.Phones.NUMBER,
-					numberString);
-			mobileValues.put(Contacts.Phones.TYPE,
-					Contacts.Phones.TYPE_MOBILE);
-			Uri phoneUpdate = getContentResolver()
-					.insert(mobileUri, mobileValues);
-			
-			if (phoneUpdate == null) {
-				Log.i(TAG, "error insert number");
-			}
 		}
-	}
+	}*/
 	
-
+	
 }
 

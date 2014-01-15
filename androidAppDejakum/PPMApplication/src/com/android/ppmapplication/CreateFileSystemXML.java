@@ -21,6 +21,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Environment;
@@ -35,13 +36,14 @@ public class CreateFileSystemXML extends Service{
 	
 	private Document document;
     private Element actualElement;
-    private SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-    
-    
+    @SuppressLint("SimpleDateFormat")
+	private SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
     
     @Override
 	public void onCreate() {
 		Log.d(TAG, "onCreate FileSystem");
+		
+		this.initialize();
 	}
 
 	@Override
@@ -56,7 +58,7 @@ public class CreateFileSystemXML extends Service{
 		Toast.makeText(this, "My Service Started Contacts read", Toast.LENGTH_SHORT).show();
 		Log.d(TAG, "onStart FileSystem");
 		
-		this.initialize();	
+		//this.initialize();	
 	}
     
 	private void showDirs(File dir, Element above){
@@ -84,12 +86,9 @@ public class CreateFileSystemXML extends Service{
 	
 	public void createFile() {
 		
-		long start = System.currentTimeMillis();
-		
-    	String contactsFileNameString = "filesystem.xml";
+		String contactsFileNameString = "filesystem.xml";
 
-		
-		File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath());
+		File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/SyncPipe/");
 		File xmlFile = new File(dir, File.separator + contactsFileNameString);
 
 
@@ -117,6 +116,7 @@ public class CreateFileSystemXML extends Service{
  	            outFormat.setProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
  	            outFormat.setProperty(OutputKeys.VERSION, "1.0");
  	            outFormat.setProperty(OutputKeys.ENCODING, "UTF-8");
+ 	            //outFormat.setProperty(OutputKeys.DOCTYPE_SYSTEM, "fileSystem.dtd");
  	            transformer.setOutputProperties(outFormat);
  	            DOMSource domSource = 
  	            new DOMSource(document.getDocumentElement());
@@ -136,7 +136,6 @@ public class CreateFileSystemXML extends Service{
  	        } catch (IOException e) {
  				e.printStackTrace();
  			}
- 		System.out.println("dauer: " + (System.currentTimeMillis()-start));
 	}
 
 	public void initialize(){

@@ -2,11 +2,15 @@ package com.android.ppmapplication;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -22,12 +26,15 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import android.R.integer;
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.graphics.Point;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
@@ -38,7 +45,10 @@ import android.os.Environment;
 import android.os.IBinder;
 import android.os.StatFs;
 import android.telephony.TelephonyManager;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 public class CreatePropertiesXML extends Service{
@@ -53,7 +63,7 @@ public class CreatePropertiesXML extends Service{
 		Toast.makeText(this, "My Properties XML Created", Toast.LENGTH_LONG).show();
 		Log.d(TAG, "onCreate");
 		
-
+		this.initialize();
 	}
 	
 	public void onDestroy() {
@@ -65,7 +75,8 @@ public class CreatePropertiesXML extends Service{
 	public void onStart(Intent intent, int startid) {
 		Toast.makeText(this, "My Service Started Properties", Toast.LENGTH_SHORT).show();
 		Log.d(TAG, "onStart");
-		this.initialize();
+		
+		//this.initialize();
 	}
 	
 	 public void initialize(){
@@ -73,6 +84,7 @@ public class CreatePropertiesXML extends Service{
 
 	            public void run() {
 	            	String propertiesFileNameString = "properties.xml";
+	            	DecimalFormat f = new DecimalFormat("0.00");
 	        		
 	        		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 	        	    NetworkInfo Info = cm.getActiveNetworkInfo();
@@ -103,7 +115,7 @@ public class CreatePropertiesXML extends Service{
 	        	            Element valueElement; 
 	        	            
 	        	            
-	        	            
+	        	            //ANDROID Version INFO
 	        	            
 	        	            Element androidVersionElement = document.createElement("androidinfo");
 	        	            rootElement.appendChild(androidVersionElement);
@@ -114,44 +126,44 @@ public class CreatePropertiesXML extends Service{
 	        	            	case 14:
 	        	            		valueElement = document.createElement("androidversion");
 	        	    	            androidVersionElement.appendChild(valueElement);
-	        	    			    valueElement.appendChild(document.createTextNode("4.0 ICE CREAME SANDWICH"));
+	        	    			    valueElement.appendChild(document.createTextNode("4.0 Ice Cream Sandwich"));
 	        	            		break;
 	        	            	case 15:
 	        	            		valueElement = document.createElement("androidversion");
 	        	    	            androidVersionElement.appendChild(valueElement);
-	        	    			    valueElement.appendChild(document.createTextNode("4.03 ICE CREAME SANDWICH MR 1"));
+	        	    			    valueElement.appendChild(document.createTextNode("4.03 Ice Cream Sandwich MR 1"));
 	        	            		break;
 	        	            	case 16:
 	        	            		valueElement = document.createElement("androidversion");
 	        	    	            androidVersionElement.appendChild(valueElement);
-	        	    			    valueElement.appendChild(document.createTextNode("4.1 JEALLY BEAN"));
+	        	    			    valueElement.appendChild(document.createTextNode("4.1 Jeally Bean"));
 	        	            		break;
 	        	            	case 17:
 	        	            		valueElement = document.createElement("androidversion");
 	        	    	            androidVersionElement.appendChild(valueElement);
-	        	    			    valueElement.appendChild(document.createTextNode("4.2 JEALLY BEAN MR 1"));
+	        	    			    valueElement.appendChild(document.createTextNode("4.2 Jeally Bean MR 1"));
 	        	            		break;
 	        	            	case 18:
 	        	            		valueElement = document.createElement("androidversion");
 	        	    	            androidVersionElement.appendChild(valueElement);
-	        	    			    valueElement.appendChild(document.createTextNode("4.3 JEALLY BEAN MR 2"));
+	        	    			    valueElement.appendChild(document.createTextNode("4.3 Jeally Bean MR 2"));
 	        	            		break;
 	        	            	case 19:
 	        	            		valueElement = document.createElement("androidversion");
 	        	    	            androidVersionElement.appendChild(valueElement);
-	        	    			    valueElement.appendChild(document.createTextNode("4.4 KITKAT"));
+	        	    			    valueElement.appendChild(document.createTextNode("4.4 Kitkat"));
 	        	            		break;
 	        	            	default:
 	        	            		valueElement = document.createElement("androidversion");
 	        	    	            androidVersionElement.appendChild(valueElement);
-	        	    			    valueElement.appendChild(document.createTextNode("older or newer version"));
+	        	    			    valueElement.appendChild(document.createTextNode("not supported"));
 	        	            		break;
 	        	            
 	        	            }
 	        	            
 
 	        	            
-	        	            
+	        	            //INTERNET SIGNAL
 	        	            
 	        	            Element internetSignalElement = document.createElement("wifisignal");
 	        	            rootElement.appendChild(internetSignalElement);
@@ -167,7 +179,7 @@ public class CreatePropertiesXML extends Service{
 
 	        	    		    valueElement = document.createElement("mobileconnection");
 	        	    		    mobileSignalElement.appendChild(valueElement);
-	        	    		    valueElement.appendChild(document.createTextNode("no3GConnection"));
+	        	    		    valueElement.appendChild(document.createTextNode("no"));
 
 	        	    	    }
 	        	    	    
@@ -176,28 +188,29 @@ public class CreatePropertiesXML extends Service{
 	        	    	         int netSubtype = Info.getSubtype();
 	        	    	         
 	        	    	        if (netType == ConnectivityManager.TYPE_WIFI) {
-	        	    	        	
-	        	    	            Log.i(TAG, "Wifi connection");
-	        	    	           
+	        	    	        		        	    	           
 	        	    	            valueElement = document.createElement("wificonnection");
 	        	    	            internetSignalElement.appendChild(valueElement);
 	        	    			    valueElement.appendChild(document.createTextNode("yes"));
 	        	    			    
 	        	    			    valueElement = document.createElement("mobileconnection");
 	        	    			    mobileSignalElement.appendChild(valueElement);
-	        	    			    valueElement.appendChild(document.createTextNode("no3G Connection because wifi is connected"));
+	        	    			    valueElement.appendChild(document.createTextNode("no wifi"));
 
 	        	    	            
 	        	    	            WifiManager wifiManager = (WifiManager) getApplication().getSystemService(Context.WIFI_SERVICE);
 	        	    	            List<ScanResult> scanResult = wifiManager.getScanResults();
 	        	    	            for (int i = 0; i < scanResult.size(); i++) {
 	        	    	            	
-	        	    	                Log.d("scanResult", "Speed of wifi"+scanResult.get(i).level);//The db level of signal 
+	        	    	            	Integer wifiStrengthInteger = scanResult.get(i).level;
+	        	    	            	
+	        	    	            	valueElement = document.createElement("wifistrength");
+		        	    	            internetSignalElement.appendChild(valueElement);
+		        	    			    valueElement.appendChild(document.createTextNode(wifiStrengthInteger.toString()));
 	        	    	            
 	        	    	            }
 	        	    	        } 
 	        	    	        else if (netType == ConnectivityManager.TYPE_MOBILE) {
-//	        	    	        	stringToWrite=stringToWrite+"GPRS/3G connection avaliable\nThe phone supports following NETWORK TYPES:\n\n";
 	        	    	            
 	        	    	            valueElement = document.createElement("wificonnection");
 	        	    	            internetSignalElement.appendChild(valueElement);
@@ -205,152 +218,154 @@ public class CreatePropertiesXML extends Service{
 	        	    			    
 	        	    			    valueElement = document.createElement("mobileconnection");
 	        	    			    mobileSignalElement.appendChild(valueElement);
-	        	    			    valueElement.appendChild(document.createTextNode("GPRS/3G connection"));
+	        	    			    valueElement.appendChild(document.createTextNode("GPRS/3G"));
 
 	        	    			    
 	        	    	            // Need to get differentiate between 3G/GPRS
 	        	    	            
 	        	    	            switch (netSubtype) {
 	        	    	            case TelephonyManager.NETWORK_TYPE_1xRTT:
-//	        	    	                stringToWrite=stringToWrite+"NETWORK TYPE 1xRTT"; // ~ 50-100 kbps
 	        	    	                
 	        	    	                valueElement = document.createElement("mobilesubtype");
 	        	    				    mobileSignalElement.appendChild(valueElement);
-	        	    				    valueElement.appendChild(document.createTextNode("NETWORK TYPE 1xRTT ~ 50-100 kbps"));
+	        	    				    valueElement.appendChild(document.createTextNode("1xRTT (50 - 100 Kbps)"));
 	        	    	                
 	        	    	            case TelephonyManager.NETWORK_TYPE_CDMA:
-//	        	    	                stringToWrite=stringToWrite+"NETWORK TYPE CDMA (3G) Speed: 2 Mbps"; // ~ 14-64 kbps
+	        	    	            	
 	        	    	                valueElement = document.createElement("mobilesubtype");
 	        	    				    mobileSignalElement.appendChild(valueElement);
-	        	    				    valueElement.appendChild(document.createTextNode("NETWORK TYPE CDMA (3G) Speed: 2 Mbps"));
+	        	    				    valueElement.appendChild(document.createTextNode("CDMA (3G) (2000 Kbps)"));
+	        	    				    
 	        	    	            case TelephonyManager.NETWORK_TYPE_EDGE:
 
-//	        	    	                stringToWrite=stringToWrite+"NETWORK TYPE EDGE (2.75G) Speed: 100-120 Kbps"; // ~
-	        	    	                                                                       // 50-100
-	        	    	                                                                        // kbps
 	        	    	                valueElement = document.createElement("mobilesubtype");
 	        	    				    mobileSignalElement.appendChild(valueElement);
-	        	    				    valueElement.appendChild(document.createTextNode("NETWORK TYPE EDGE (2.75G) Speed: 100-120 Kbps"));
+	        	    				    valueElement.appendChild(document.createTextNode("EDGE  (100 - 120 Kbps)"));
+	        	    				    
 	        	    	            case TelephonyManager.NETWORK_TYPE_EVDO_0:
-//	        	    	                stringToWrite=stringToWrite+"NETWORK TYPE EVDO_0"; // ~ 400-1000 kbps
+	        	    	            	
 	        	    	                valueElement = document.createElement("mobilesubtype");
 	        	    				    mobileSignalElement.appendChild(valueElement);
-	        	    				    valueElement.appendChild(document.createTextNode("NETWORK TYPE EVDO_0"));
+	        	    				    valueElement.appendChild(document.createTextNode("EVDO_0"));
+	        	    				    
 	        	    	            case TelephonyManager.NETWORK_TYPE_EVDO_A:
-//	        	    	                stringToWrite=stringToWrite+"NETWORK TYPE EVDO_A"; // ~ 600-1400 kbps
+	        	    	            	
 	        	    	                valueElement = document.createElement("mobilesubtype");
 	        	    				    mobileSignalElement.appendChild(valueElement);
-	        	    				    valueElement.appendChild(document.createTextNode("NETWORK TYPE EVDO_A"));
+	        	    				    valueElement.appendChild(document.createTextNode("EVDO_A"));
+	        	    				    
 	        	    	            case TelephonyManager.NETWORK_TYPE_GPRS:
-//	        	    	                stringToWrite=stringToWrite+"NETWORK TYPE GPRS (2.5G) Speed: 40-50 Kbps"; // ~ 100
-	        	    	                                                                        // kbps
+	        	    	            	
 	        	    	                valueElement = document.createElement("mobilesubtype");
 	        	    				    mobileSignalElement.appendChild(valueElement);
-	        	    				    valueElement.appendChild(document.createTextNode("NETWORK TYPE GPRS (2.5G) Speed: 40-50 Kbps"));
+	        	    				    valueElement.appendChild(document.createTextNode("GPRS (2.5G) (40 - 50 Kbps)"));
+	        	    				    
 	        	    	            case TelephonyManager.NETWORK_TYPE_HSDPA:
-//	        	    	                stringToWrite=stringToWrite+"NETWORK TYPE HSDPA (4G) Speed: 2-14 Mbps"; // ~ 2-14
-	        	    	                                                                    // Mbps
+	        	    	            	
 	        	    	                valueElement = document.createElement("mobilesubtype");
 	        	    				    mobileSignalElement.appendChild(valueElement);
-	        	    				    valueElement.appendChild(document.createTextNode("NETWORK TYPE HSDPA (4G) Speed: 2-14 Mbps"));
+	        	    				    valueElement.appendChild(document.createTextNode("HSDPA (4G) (2000 - 14000 Kbps)"));
+	        	    				    
 	        	    	            case TelephonyManager.NETWORK_TYPE_HSPA:
-//	        	    	                stringToWrite=stringToWrite+"NETWORK TYPE HSPA (4G) Speed: 0.7-1.7 Mbps"; // ~
-	        	    	                                                                        // 700-1700
-	        	    	                                                                        // kbps
+	        	    	            	
 	        	    	                valueElement = document.createElement("mobilesubtype");
 	        	    				    mobileSignalElement.appendChild(valueElement);
-	        	    				    valueElement.appendChild(document.createTextNode("NETWORK TYPE HSPA (4G) Speed: 0.7-1.7 Mbps"));
+	        	    				    valueElement.appendChild(document.createTextNode("HSPA (4G) (700 - 1700 Kbps)"));
+	        	    				    
 	        	    	            case TelephonyManager.NETWORK_TYPE_HSUPA:
-//	        	    	                stringToWrite=stringToWrite+"NETWORK TYPE HSUPA (3G) Speed: 1-23 Mbps"; // ~ 1-23
-	        	    	                                                                    // Mbps
+	        	    	            	
 	        	    	                valueElement = document.createElement("mobilesubtype");
 	        	    				    mobileSignalElement.appendChild(valueElement);
-	        	    				    valueElement.appendChild(document.createTextNode("NETWORK TYPE HSUPA (3G) Speed: 1-23 Mbps"));
+	        	    				    valueElement.appendChild(document.createTextNode("HSUPA (3G) (1000 - 23000 Kbps)"));
+	        	    				    
 	        	    	            case TelephonyManager.NETWORK_TYPE_UMTS:
-//	        	    	                stringToWrite=stringToWrite+"NETWORK TYPE UMTS (3G) Speed: 0.4-7 Mbps"; // ~ 400-7000
+	        	    	            	
 	        	    	                valueElement = document.createElement("mobilesubtype");
 	        	    				    mobileSignalElement.appendChild(valueElement);
-	        	    				    valueElement.appendChild(document.createTextNode("NETWORK TYPE UMTS (3G) Speed: 0.4-7 Mbps"));
+	        	    				    valueElement.appendChild(document.createTextNode("UMTS (3G) (400 - 7000 Kbps)"));
+	        	    				    
 	        	    	                // NOT AVAILABLE YET IN API LEVEL 7
+	        	    				    
+	        	    				    
 	        	    	            case TelephonyManager.NETWORK_TYPE_EHRPD:
-//	        	    	                stringToWrite=stringToWrite+"NETWORK TYPE EHRPD"; // ~ 1-2 Mbps
+	        	    	            	
 	        	    	                valueElement = document.createElement("mobilesubtype");
 	        	    				    mobileSignalElement.appendChild(valueElement);
-	        	    				    valueElement.appendChild(document.createTextNode("NETWORK TYPE EHRPD"));
+	        	    				    valueElement.appendChild(document.createTextNode("EHRPD"));
+	        	    				    
 	        	    	            case TelephonyManager.NETWORK_TYPE_EVDO_B:
-//	        	    	                stringToWrite=stringToWrite+"NETWORK_TYPE_EVDO_B"; // ~ 5 Mbps
+	        	    	            	
 	        	    	                valueElement = document.createElement("mobilesubtype");
 	        	    				    mobileSignalElement.appendChild(valueElement);
-	        	    				    valueElement.appendChild(document.createTextNode("NETWORK_TYPE_EVDO_B"));
+	        	    				    valueElement.appendChild(document.createTextNode("EVDO_B"));
+	        	    				    
 	        	    	            case TelephonyManager.NETWORK_TYPE_HSPAP:
-//	        	    	                stringToWrite=stringToWrite+"NETWORK TYPE HSPA+ (4G) Speed: 10-20 Mbps"; // ~ 10-20
-	        	    	                                                                    // Mbps
+	        	    	            	
 	        	    	                valueElement = document.createElement("mobilesubtype");
 	        	    				    mobileSignalElement.appendChild(valueElement);
-	        	    				    valueElement.appendChild(document.createTextNode("NETWORK TYPE HSPA+ (4G) Speed: 10-20 Mbps"));
+	        	    				    valueElement.appendChild(document.createTextNode("HSPA+ (4G) (10000 - 20000 Kbps)"));
+	        	    				    
 	        	    	            case TelephonyManager.NETWORK_TYPE_IDEN:
-//	        	    	                stringToWrite=stringToWrite+"NETWORK TYPE IDEN"; // ~25 kbps
+	        	    	            	
 	        	    	                valueElement = document.createElement("mobilesubtype");
 	        	    				    mobileSignalElement.appendChild(valueElement);
-	        	    				    valueElement.appendChild(document.createTextNode("NETWORK TYPE IDEN"));
+	        	    				    valueElement.appendChild(document.createTextNode("IDEN"));
+	        	    				    
 	        	    	            case TelephonyManager.NETWORK_TYPE_LTE:
 	        	    	                
 	        	    	                valueElement = document.createElement("mobilesubtype");
 	        	    				    mobileSignalElement.appendChild(valueElement);
-	        	    				    valueElement.appendChild(document.createTextNode("NETWORK TYPE LTE (4G) Speed: 10+ Mbps"));
+	        	    				    valueElement.appendChild(document.createTextNode("LTE (4G) (10000+ Kbps)"));
 	        	    	                
 	        	    	            }
 	        	    	        } else {
-//	        	    	            stringToWrite=stringToWrite+"ERROR";
 	        	    	            valueElement = document.createElement("mobilesubtype");
         	    				    mobileSignalElement.appendChild(valueElement);
         	    				    valueElement.appendChild(document.createTextNode("ERROR"));
 	        	    	        }
 	        	    	    }
 	        	            
-	        	            
-	        	            
-	        	            
 	        	    	    
-	        	    	    
-	        	    	    
-	        	    	    
-	        	    	 //nur JeallyBean
+	        	    	 //NUR JeallyBean
 	        	    	    
 	        	    	 /*
 	        	    	  if(androidVersion >= 16){
 	        	    		  //this code will be executed on devices running on DONUT (NOT ICS) or later
-}
-	        	    	   stringToWrite=stringToWrite+"Signal Strength \n";
-	        	    	   
-	        	    	   
-	        	    	   
-	        	    	    TelephonyManager telephonyManager = (TelephonyManager)this.getSystemService(Context.TELEPHONY_SERVICE);
-	        	    	 // for example value of first element
-	        	    	 CellInfoGsm cellinfogsm = (CellInfoGsm)telephonyManager.getAllCellInfo().get(0);
-	        	    	 CellSignalStrengthGsm cellSignalStrengthGsm = cellinfogsm.getCellSignalStrength();
-	        	    	 cellSignalStrengthGsm.getDbm();	
-	        			}*/
-	        	    	    
-	        	    	 /*
-	        	    	    int strengthAmplitude = MyPhoneStateListener.getStrength();
-	        	    	    
-	        	    	    //do something with it (in this case we update a text view)
-	        	    	    stringToWrite=stringToWrite+"signal strength"+String.valueOf(strengthAmplitude);		
-	        	    		
-	        	    	    ContentResolver cr = getContentResolver();
-	        	            Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
-	        	                    null, null, null, null);
-	        	            if (cur.getCount() > 0) {
-	        	    		    while (cur.moveToNext()) {
-	        	    		        String id = cur.getString(
-	        	    	                        cur.getColumnIndex(ContactsContract.Contacts._ID));
-	        	    			String name = cur.getString(
-	        	    	                        cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-	        	    		 		if (Integer.parseInt(cur.getString(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
-	        	    		 		    //Query phone here.  Covered next
-	        	    		 	    }
-	        	    	        }
+	        	    	  
+		        	    	   stringToWrite=stringToWrite+"Signal Strength \n";
+		        	    	   
+		        	    	   valueElement = document.createElement("mobiesignal");
+		        			   mobileSignalElement.appendChild(valueElement);
+		        	    	   valueElement.appendChild(document.createTextNode("LTE (4G) (10000+ Kbps)"));
+		        	    	   
+		        	    	   
+		        	    	    TelephonyManager telephonyManager = (TelephonyManager)this.getSystemService(Context.TELEPHONY_SERVICE);
+		        	    	 // for example value of first element
+		        	    	 CellInfoGsm cellinfogsm = (CellInfoGsm)telephonyManager.getAllCellInfo().get(0);
+		        	    	 CellSignalStrengthGsm cellSignalStrengthGsm = cellinfogsm.getCellSignalStrength();
+		        	    	 cellSignalStrengthGsm.getDbm();	
+		        			
+		        	    	    
+		        	    	 
+		        	    	    int strengthAmplitude = MyPhoneStateListener.getStrength();
+		        	    	    
+		        	    	    //do something with it (in this case we update a text view)
+		        	    	    stringToWrite=stringToWrite+"signal strength"+String.valueOf(strengthAmplitude);		
+		        	    		
+		        	    	    ContentResolver cr = getContentResolver();
+		        	            Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
+		        	                    null, null, null, null);
+		        	            if (cur.getCount() > 0) {
+		        	    		    while (cur.moveToNext()) {
+		        	    		        String id = cur.getString(
+		        	    	                        cur.getColumnIndex(ContactsContract.Contacts._ID));
+		        	    			String name = cur.getString(
+		        	    	                        cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+		        	    		 		if (Integer.parseInt(cur.getString(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
+		        	    		 		    //Query phone here.  Covered next
+		        	    		 	    }
+		        	    	        }
+		        	            }
 	        	            }
 	        	    	   	   
 	        	    	   	   
@@ -369,12 +384,12 @@ public class CreatePropertiesXML extends Service{
 	        	    	        }
 
 	        	    	        }
-	        	    	    */
+	        	    	    
+	        	    	    /*
 	        	    	    
 	        	    	    
 	        	    	    
-	        	    	    
-	        	    	    //nur Galaxy S4
+	        	    	    //NUR Galaxy S4
 	        	    	    
 	        	    	    /*Sensor TemperatureSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_TEMPERATURE);
 	        	    	     if(TemperatureSensor != null){
@@ -406,6 +421,7 @@ public class CreatePropertiesXML extends Service{
 	        	    	    
 	        	    	    
 	        	    	    
+	        	            
 	        	    	    
 	        	    	    //Internal Storage
 	        	    	    
@@ -423,21 +439,15 @@ public class CreatePropertiesXML extends Service{
 	        	    	    
 	        	    	    valueElement = document.createElement("totalinternalstorage");
     	    	            internalStorageElement.appendChild(valueElement);
-    	    			    valueElement.appendChild(document.createTextNode(totalInternalStorage.toString()));
+    	    			    valueElement.appendChild(document.createTextNode(f.format(totalInternalStorage)));
     	    			    
     	    			    valueElement = document.createElement("freeinternalstorage");
     	    	            internalStorageElement.appendChild(valueElement);
-    	    			    valueElement.appendChild(document.createTextNode(freeInternalStorage.toString()));
+    	    			    valueElement.appendChild(document.createTextNode(f.format(freeInternalStorage)));
     	    			    
     	    			    valueElement = document.createElement("usedinternalstorage");
     	    	            internalStorageElement.appendChild(valueElement);
-    	    			    valueElement.appendChild(document.createTextNode(usedInternalStorage.toString()));
-	        	    	    
-//	        	    	    System.out.println(freeInternalStorage);
-//	        	    	    System.out.println(totalInternalStorage);
-//	        	    	    System.out.println(usedInternalStorage);
-	        	    	    
-	        	    	    
+    	    			    valueElement.appendChild(document.createTextNode(f.format(usedInternalStorage)));
 	        	    	    
 	        	    	    //SD CARD
 	        	    	    
@@ -454,15 +464,19 @@ public class CreatePropertiesXML extends Service{
 	        	    	    
 	        	    	    valueElement = document.createElement("totalsdstorage");
     	    	            sdCardStorageElement.appendChild(valueElement);
-    	    			    valueElement.appendChild(document.createTextNode(totalSDSpaceInMB.toString()));
+    	    			    valueElement.appendChild(document.createTextNode(f.format(totalSDSpaceInMB)));
     	    			    
-    	    			    valueElement = document.createElement("freeinternalstorage");
+    	    			    valueElement = document.createElement("freesdstorage");
     	    	            sdCardStorageElement.appendChild(valueElement);
-    	    			    valueElement.appendChild(document.createTextNode(freeSDSpaceInMB.toString()));
+    	    			    valueElement.appendChild(document.createTextNode(f.format(freeSDSpaceInMB)));
     	    			    
-    	    			    valueElement = document.createElement("usedinternalstorage");
+    	    			    valueElement = document.createElement("usedsdstorage");
     	    	            sdCardStorageElement.appendChild(valueElement);
-    	    			    valueElement.appendChild(document.createTextNode(usedSDSpaceInMB.toString()));
+    	    			    valueElement.appendChild(document.createTextNode(f.format(usedSDSpaceInMB)));
+    	    			    
+    	    			    
+    	    			    
+    	    			    
 	        	    	    
 	        	    	    //Total Storage
 	        	    	    
@@ -475,15 +489,15 @@ public class CreatePropertiesXML extends Service{
 	        	    	    
 	        	            valueElement = document.createElement("totalstorage");
     	    	            totalStorageElement.appendChild(valueElement);
-    	    			    valueElement.appendChild(document.createTextNode(totalStorage.toString()));
+    	    			    valueElement.appendChild(document.createTextNode(f.format(totalStorage)));
     	    			    
     	    			    valueElement = document.createElement("totalfreestorage");
     	    	            totalStorageElement.appendChild(valueElement);
-    	    			    valueElement.appendChild(document.createTextNode(totalFreeStorage.toString()));
+    	    			    valueElement.appendChild(document.createTextNode(f.format(totalFreeStorage)));
     	    			    
     	    			    valueElement = document.createElement("totalusedstorage");
     	    	            totalStorageElement.appendChild(valueElement);
-    	    			    valueElement.appendChild(document.createTextNode(totalUsedStorage.toString()));
+    	    			    valueElement.appendChild(document.createTextNode(f.format(totalUsedStorage)));
 	        	    	    
 	        	    	    
 	        	    	    //RAM
@@ -510,7 +524,7 @@ public class CreatePropertiesXML extends Service{
     	    			    valueElement.appendChild(document.createTextNode(usedMemInMB.toString()+" MB"));
 	        	    	    
 	        	    	    
-	        	    	    //BATTERY VALUE
+	        	    	    //BATTERY VALUES
 	        	    	    
 	        	    	    Element batteryElement = document.createElement("battery");
 	        	            rootElement.appendChild(batteryElement);
@@ -519,8 +533,8 @@ public class CreatePropertiesXML extends Service{
 	        	    	    Intent batteryStatus = registerReceiver(null, ifilter);
 	        	    	    
 	        	    	    Integer level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-	        	    	    Integer temp = batteryStatus.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, -1);
-	        			    Integer voltage = batteryStatus.getIntExtra(BatteryManager.EXTRA_VOLTAGE, -1);
+	        	    	    Double temp = (double) (batteryStatus.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, -1)) / 10;
+	        			    Double voltage = (double) batteryStatus.getIntExtra(BatteryManager.EXTRA_VOLTAGE, -1)/1000;
 	        			    Integer status = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
 	        			    String  technology= batteryStatus.getExtras().getString(BatteryManager.EXTRA_TECHNOLOGY);
 	        	    	    
@@ -530,19 +544,18 @@ public class CreatePropertiesXML extends Service{
 
     	    			    valueElement = document.createElement("batterytemperature");
     	    	            batteryElement.appendChild(valueElement);
-    	    			    valueElement.appendChild(document.createTextNode(temp.toString()));
+    	    			    valueElement.appendChild(document.createTextNode(f.format(temp)+" ¡C"));
 
     	    			    valueElement = document.createElement("batteryvoltage");
     	    	            batteryElement.appendChild(valueElement);
-    	    			    valueElement.appendChild(document.createTextNode(voltage.toString()));
+    	    			    valueElement.appendChild(document.createTextNode(voltage.toString() + " V"));
     	    			    
     	    			    boolean isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
     	    	                     status == BatteryManager.BATTERY_STATUS_FULL;
     	    			    
     	    			    String statusTextString;
     	    			    
-    	    			    if(status == BatteryManager.BATTERY_STATUS_CHARGING ||
-    	    	                     status == BatteryManager.BATTERY_STATUS_FULL){
+    	    			    if(isCharging){
     	    			    		statusTextString = "yes";
     	    			    }
     	    			    else {
@@ -557,10 +570,110 @@ public class CreatePropertiesXML extends Service{
     	    	            batteryElement.appendChild(valueElement);
     	    			    valueElement.appendChild(document.createTextNode(technology));
     	    			    
+    	    			    
+    	    			    
+    	    			    
+    	    			  //CPU
+    	    			    
+    	    			    Element cpuElement = document.createElement("cpu");
+	        	            rootElement.appendChild(cpuElement);
+	        	            
+	        	            valueElement = document.createElement("cpumaxfrequency");
+    	    	            cpuElement.appendChild(valueElement);
+    	    			    valueElement.appendChild(document.createTextNode(getMaxCPUFreqMHz().toString()+" Mhz"));
+    	    			    
+    	    			    valueElement = document.createElement("cpucorenumber");
+    	    	            cpuElement.appendChild(valueElement);
+    	    			    valueElement.appendChild(document.createTextNode(getNumCores().toString()));
+    	    			    
+    	    			    
+    	    			    
+    	    			    
+    	    			    
+    	    			    //DISPLAY
+	        	    	    
+    	    			    WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+    	    			    Display display = wm.getDefaultDisplay();
+    	    			    Point size = new Point();
+	        	    	    display.getSize(size);
+	        	    	    Integer width = size.x;
+	        	    	    Integer heigth = size.y;
 	        	    	    
 	        	    	    
+	        	    	    DisplayMetrics dm = new DisplayMetrics();
+	        	    	    wm.getDefaultDisplay().getMetrics(dm);
+	        	    	    Double x = Math.pow(dm.widthPixels/dm.xdpi,2);
+	        	    	    Double y = Math.pow(dm.heightPixels/dm.ydpi,2);
+	        	    	    Double screenInches = Math.sqrt(x+y);
 	        	    	    
-	        	    	    
+	        	    	    Element displayElement = document.createElement("display");
+	        	            rootElement.appendChild(displayElement);
+	        	            
+	        	            valueElement = document.createElement("displaywidth");
+    	    	            displayElement.appendChild(valueElement);
+    	    			    valueElement.appendChild(document.createTextNode(f.format(x)+" cm"));
+    	    			    
+    	    			    valueElement = document.createElement("displayheigth");
+    	    	            displayElement.appendChild(valueElement);
+    	    			    valueElement.appendChild(document.createTextNode(f.format(y)+" cm"));
+    	    			    
+    	    			    valueElement = document.createElement("displaysize");
+    	    	            displayElement.appendChild(valueElement);
+    	    			    valueElement.appendChild(document.createTextNode(f.format(screenInches)+" ''"));
+    	    			    
+    	    			    valueElement = document.createElement("displayresolution");
+    	    	            displayElement.appendChild(valueElement);
+    	    			    valueElement.appendChild(document.createTextNode(width.toString()+" x "+heigth.toString()));
+    	    			    
+    	    			    
+    	    			    //SENSORS
+    	    			    
+    	    			    SensorManager mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
+    	    			    List<Sensor> sensorList = mSensorManager.getSensorList(Sensor.TYPE_ALL);
+    	    			    
+    	    			    Element sensorElement = document.createElement("sensorlist");
+	        	            rootElement.appendChild(sensorElement);
+	        	            
+	        	            Integer sensorAmount = sensorList.size();
+
+	        	            valueElement = document.createElement("sensoramount");
+    	    	            sensorElement.appendChild(valueElement);
+    	    			    valueElement.appendChild(document.createTextNode(sensorAmount.toString()));
+	        	            
+    	    			    for(int i=0;i<sensorAmount;i++) {
+    	    			    	
+    	    			    	valueElement = document.createElement("sensor");
+        	    	            sensorElement.appendChild(valueElement);
+        	    			    valueElement.appendChild(document.createTextNode(sensorList.get(i).getName()));
+    	    			    	
+    	    			    }
+    	    			    
+    	    			    
+    	    			    
+    	    			    //APPS
+    	    			    
+    	    			  final PackageManager pm = getPackageManager();
+    	    			  //get a list of installed apps.
+    	    			  List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
+    	    			  
+    	    			  Element appListElement = document.createElement("applist");
+	        	          rootElement.appendChild(appListElement);
+	        	          
+	        	          Integer appAmount = packages.size();
+	        	          
+	        	          valueElement = document.createElement("appamount");
+	        	          appListElement.appendChild(valueElement);
+	        	          valueElement.appendChild(document.createTextNode(appAmount.toString()));
+    	    			  
+    	    			  for (ApplicationInfo packageInfo : packages) {
+    	    			      String[] packagePart = packageInfo.packageName.split("\\.");
+	    			    	  String appName = packagePart[packagePart.length-1];
+	    			    	  
+	    			    	  valueElement = document.createElement("appname");
+		        	          appListElement.appendChild(valueElement);
+		        	          valueElement.appendChild(document.createTextNode(appName));
+    	    			  }
+    	    			        	    			    
 	        	    	    
 	        	    	    
 	        	    	    try {
@@ -573,7 +686,7 @@ public class CreatePropertiesXML extends Service{
 	        	    	        outFormat.setProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
 	        	    	        outFormat.setProperty(OutputKeys.VERSION, "1.0");
 	        	    	        outFormat.setProperty(OutputKeys.ENCODING, "UTF-8");
-	        	    	        outFormat.setProperty(OutputKeys.DOCTYPE_SYSTEM, "properties.dtd");
+	        	    	        //outFormat.setProperty(OutputKeys.DOCTYPE_SYSTEM, "properties.dtd");
 	        	    	        transformer.setOutputProperties(outFormat);
 	        	    	        DOMSource domSource = new DOMSource(document.getDocumentElement());
 	        	    	        OutputStream output = new ByteArrayOutputStream();
@@ -607,8 +720,66 @@ public class CreatePropertiesXML extends Service{
 	        th.start();
 	        
 	    }
+	 private Integer getMaxCPUFreqMHz() {
 
-/*
+		    int maxFreq = -1;
+		    try {
+
+		        @SuppressWarnings("resource")
+				RandomAccessFile reader = new RandomAccessFile( "/sys/devices/system/cpu/cpu0/cpufreq/stats/time_in_state", "r" );
+
+		        boolean done = false;
+		        while ( ! done ) {
+		            String line = reader.readLine();
+		            if ( null == line ) {
+		                done = true;
+		                break;
+		            }
+		            String[] splits = line.split( "\\s+" );
+		            assert ( splits.length == 2 );
+		            int timeInState = Integer.parseInt( splits[1] );
+		            if ( timeInState > 0 ) {
+		                int freq = Integer.parseInt( splits[0] ) / 1000;
+		                if ( freq > maxFreq ) {
+		                    maxFreq = freq;
+		                }
+		            }
+		        }
+
+		    } catch ( IOException ex ) {
+		        ex.printStackTrace();
+		    }
+
+		    return maxFreq;
+		}
+	 
+	 private Integer getNumCores() {
+		    //Private Class to display only CPU devices in the directory listing
+		    class CpuFilter implements FileFilter {
+		        @Override
+		        public boolean accept(File pathname) {
+		            //Check if filename is "cpu", followed by a single digit number
+		            if(Pattern.matches("cpu[0-9]+", pathname.getName())) {
+		                return true;
+		            }
+		            return false;
+		        }      
+		    }
+
+		    try {
+		        //Get directory containing CPU info
+		        File dir = new File("/sys/devices/system/cpu/");
+		        //Filter to only list the devices we care about
+		        File[] files = dir.listFiles(new CpuFilter());
+		        //Return the number of cores (virtual CPU devices)
+		        return files.length;
+		    } catch(Exception e) {
+		        //Default to return 1 core
+		        return 1;
+		    }
+		}
+
+	 /*
 	 private BroadcastReceiver mBatInfoReceiver = new BroadcastReceiver(){
 		    public void onReceive(Context arg0, Intent intent) {
 		        //this will give you battery current status
