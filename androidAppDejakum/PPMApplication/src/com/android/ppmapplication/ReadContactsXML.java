@@ -41,7 +41,7 @@ public class ReadContactsXML extends Service{
 	
 	@Override
 	public void onCreate() {
-		Toast.makeText(this, "My Service Created", Toast.LENGTH_LONG).show();
+		Toast.makeText(this, "My Service ReadContacts Created ", Toast.LENGTH_LONG).show();
 		Log.d(TAG, "onCreate Contacts read");
 		
 		this.initialize();
@@ -49,17 +49,15 @@ public class ReadContactsXML extends Service{
 
 	@Override
 	public void onDestroy() {
-		Toast.makeText(this, "My Service Stopped Contacts", Toast.LENGTH_SHORT).show();
+		//Toast.makeText(this, "My Service Stopped Contacts", Toast.LENGTH_SHORT).show();
 		Log.d(TAG, "onDestroy Contacts read");
 		
 	}
 	
 	@Override
 	public void onStart(Intent intent, int startid) {
-		Toast.makeText(this, "My Service Started Contacts read", Toast.LENGTH_SHORT).show();
+		//Toast.makeText(this, "My Service Started Contacts read", Toast.LENGTH_SHORT).show();
 		Log.d(TAG, "onStart Contacts read");
-		
-		//this.initialize();	
 	}
 
 	public void initialize(){

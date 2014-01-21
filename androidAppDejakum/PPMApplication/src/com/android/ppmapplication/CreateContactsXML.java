@@ -40,24 +40,22 @@ public class CreateContactsXML extends Service{
 	
 	@Override
 	public void onCreate() {
-//		Toast.makeText(this, "My Service Created", Toast.LENGTH_LONG).show();
+		Toast.makeText(this, "My Service create Contacts Created", Toast.LENGTH_LONG).show();
 		Log.d(TAG, "onCreate Contacts");
 		this.initialize();
 	}
 
 	@Override
 	public void onDestroy() {
-		Toast.makeText(this, "My Service Stopped Contacts", Toast.LENGTH_SHORT).show();
+		//Toast.makeText(this, "My Service Stopped Contacts create", Toast.LENGTH_SHORT).show();
 		Log.d(TAG, "onDestroy Contacts");
 		
 	}
 	
 	@Override
 	public void onStart(Intent intent, int startid) {
-		Toast.makeText(this, "My Service Started Contacts", Toast.LENGTH_SHORT).show();
+		//Toast.makeText(this, "My Service Started Contacts create", Toast.LENGTH_SHORT).show();
 		Log.d(TAG, "onStart");
-		
-		//this.initialize();	
 	}
 
 	public void initialize(){

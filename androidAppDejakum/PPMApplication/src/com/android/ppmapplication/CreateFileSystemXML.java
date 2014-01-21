@@ -41,6 +41,7 @@ public class CreateFileSystemXML extends Service{
     
     @Override
 	public void onCreate() {
+		Toast.makeText(this, "My Service Create FileSystem create", Toast.LENGTH_SHORT).show();
 		Log.d(TAG, "onCreate FileSystem");
 		
 		this.initialize();
@@ -48,14 +49,14 @@ public class CreateFileSystemXML extends Service{
 
 	@Override
 	public void onDestroy() {
-		Toast.makeText(this, "My Service Stopped Contacts", Toast.LENGTH_SHORT).show();
+		//Toast.makeText(this, "My Service Stopped FileSystem create", Toast.LENGTH_SHORT).show();
 		Log.d(TAG, "onDestroy FileSystem");
 		
 	}
 	
 	@Override
 	public void onStart(Intent intent, int startid) {
-		Toast.makeText(this, "My Service Started Contacts read", Toast.LENGTH_SHORT).show();
+		//Toast.makeText(this, "My Service Started FileSystem create", Toast.LENGTH_SHORT).show();
 		Log.d(TAG, "onStart FileSystem");
 		
 		//this.initialize();	
@@ -153,5 +154,24 @@ public class CreateFileSystemXML extends Service{
 		return null;
 	}
 }
+
+/*private void createSubDirs(Node node) {
+NodeList nodeList = node.getChildNodes();
+Log.i(TAG,Integer.toString(nodeList.getLength()));
+Log.i(TAG, nodeList.item(0).getNodeName());
+//Log.i(TAG, nodeList.item(index))
+for (int i = 0; i < nodeList.getLength(); i++) {
 	
+	
+	if (nodeList.item(i).getNodeName()=="d") {
+			currentTreeNode = new DefaultMutableTreeNode(((Element) nodeList.item(i)).getAttribute("name"));
+			treeNode.add(currentTreeNode);
+			createSubDirs(nodeList.item(i), currentTreeNode);
+    }
+	else if(nodeList.item(i).getNodeName()=="f"){
+		treeNode.add(new DefaultMutableTreeNode(((Element) nodeList.item(i)).getAttribute("name")));
+	}
+
+}
+}*/
 

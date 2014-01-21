@@ -60,23 +60,21 @@ public class CreatePropertiesXML extends Service{
 	}
 	
 	public void onCreate() {
-		Toast.makeText(this, "My Properties XML Created", Toast.LENGTH_LONG).show();
+		Toast.makeText(this, "My Service Created Properties", Toast.LENGTH_LONG).show();
 		Log.d(TAG, "onCreate");
 		
 		this.initialize();
 	}
 	
 	public void onDestroy() {
-		Toast.makeText(this, "My Service Stopped Properties", Toast.LENGTH_SHORT).show();
+		//Toast.makeText(this, "My Service Stopped Properties", Toast.LENGTH_SHORT).show();
 		Log.d(TAG, "onDestroy");
 		
 	}
 
 	public void onStart(Intent intent, int startid) {
-		Toast.makeText(this, "My Service Started Properties", Toast.LENGTH_SHORT).show();
+		//Toast.makeText(this, "My Service Started Properties", Toast.LENGTH_SHORT).show();
 		Log.d(TAG, "onStart");
-		
-		//this.initialize();
 	}
 	
 	 public void initialize(){
@@ -439,15 +437,15 @@ public class CreatePropertiesXML extends Service{
 	        	    	    
 	        	    	    valueElement = document.createElement("totalinternalstorage");
     	    	            internalStorageElement.appendChild(valueElement);
-    	    			    valueElement.appendChild(document.createTextNode(f.format(totalInternalStorage)));
+    	    			    valueElement.appendChild(document.createTextNode(totalInternalStorage.toString()));
     	    			    
     	    			    valueElement = document.createElement("freeinternalstorage");
     	    	            internalStorageElement.appendChild(valueElement);
-    	    			    valueElement.appendChild(document.createTextNode(f.format(freeInternalStorage)));
+    	    			    valueElement.appendChild(document.createTextNode(freeInternalStorage.toString()));
     	    			    
     	    			    valueElement = document.createElement("usedinternalstorage");
     	    	            internalStorageElement.appendChild(valueElement);
-    	    			    valueElement.appendChild(document.createTextNode(f.format(usedInternalStorage)));
+    	    			    valueElement.appendChild(document.createTextNode(usedInternalStorage.toString()));
 	        	    	    
 	        	    	    //SD CARD
 	        	    	    
@@ -464,15 +462,15 @@ public class CreatePropertiesXML extends Service{
 	        	    	    
 	        	    	    valueElement = document.createElement("totalsdstorage");
     	    	            sdCardStorageElement.appendChild(valueElement);
-    	    			    valueElement.appendChild(document.createTextNode(f.format(totalSDSpaceInMB)));
+    	    			    valueElement.appendChild(document.createTextNode(totalSDSpaceInMB.toString()));
     	    			    
     	    			    valueElement = document.createElement("freesdstorage");
     	    	            sdCardStorageElement.appendChild(valueElement);
-    	    			    valueElement.appendChild(document.createTextNode(f.format(freeSDSpaceInMB)));
+    	    			    valueElement.appendChild(document.createTextNode(freeSDSpaceInMB.toString()));
     	    			    
     	    			    valueElement = document.createElement("usedsdstorage");
     	    	            sdCardStorageElement.appendChild(valueElement);
-    	    			    valueElement.appendChild(document.createTextNode(f.format(usedSDSpaceInMB)));
+    	    			    valueElement.appendChild(document.createTextNode(usedSDSpaceInMB.toString()));
     	    			    
     	    			    
     	    			    
@@ -489,15 +487,15 @@ public class CreatePropertiesXML extends Service{
 	        	    	    
 	        	            valueElement = document.createElement("totalstorage");
     	    	            totalStorageElement.appendChild(valueElement);
-    	    			    valueElement.appendChild(document.createTextNode(f.format(totalStorage)));
+    	    			    valueElement.appendChild(document.createTextNode(totalStorage.toString()));
     	    			    
     	    			    valueElement = document.createElement("totalfreestorage");
     	    	            totalStorageElement.appendChild(valueElement);
-    	    			    valueElement.appendChild(document.createTextNode(f.format(totalFreeStorage)));
+    	    			    valueElement.appendChild(document.createTextNode(totalFreeStorage.toString()));
     	    			    
     	    			    valueElement = document.createElement("totalusedstorage");
     	    	            totalStorageElement.appendChild(valueElement);
-    	    			    valueElement.appendChild(document.createTextNode(f.format(totalUsedStorage)));
+    	    			    valueElement.appendChild(document.createTextNode(totalUsedStorage.toString()));
 	        	    	    
 	        	    	    
 	        	    	    //RAM
@@ -587,9 +585,6 @@ public class CreatePropertiesXML extends Service{
     	    			    valueElement.appendChild(document.createTextNode(getNumCores().toString()));
     	    			    
     	    			    
-    	    			    
-    	    			    
-    	    			    
     	    			    //DISPLAY
 	        	    	    
     	    			    WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
@@ -673,7 +668,46 @@ public class CreatePropertiesXML extends Service{
 		        	          appListElement.appendChild(valueElement);
 		        	          valueElement.appendChild(document.createTextNode(appName));
     	    			  }
-    	    			        	    			    
+    	    			      
+    	    			  
+    	    			//NUR mit Temperature Sensor
+    	    		      
+    	    			  /*  private final SensorEventListener TemperatureSensorListener
+    	    			     = new SensorEventListener(){
+
+    	    			   @Override
+    	    			   public void onAccuracyChanged(Sensor sensor, int accuracy) {
+    	    			    // TODO Auto-generated method stub
+    	    			    
+    	    			   }
+
+    	    			   @Override
+    	    			   public void onSensorChanged(SensorEvent event) {
+    	    			    if(event.sensor.getType() == Sensor.TYPE_TEMPERATURE){
+    	    			        Log.i(TAG, "TEMPERATURE: " + event.values[0]);
+    	    			    }
+    	    			   }
+    	    			     
+    	    			    };
+    	    			    
+    	    			    private final SensorEventListener AmbientTemperatureSensorListener
+    	    			     = new SensorEventListener(){
+
+    	    				   @Override
+    	    				   public void onAccuracyChanged(Sensor sensor, int accuracy) {
+    	    				    // TODO Auto-generated method stub
+    	    				   
+    	    				   }
+    	    			
+    	    				   @Override
+    	    				   public void onSensorChanged(SensorEvent event) {
+    	    				    if(event.sensor.getType() == Sensor.TYPE_AMBIENT_TEMPERATURE){
+    	    				        Log.i(TAG, "AMBIENT TEMPERATURE: " + event.values[0]);
+    	    				    }
+    	    				   }
+    	    			 
+    	    			   };
+    	    				*/
 	        	    	    
 	        	    	    
 	        	    	    try {
