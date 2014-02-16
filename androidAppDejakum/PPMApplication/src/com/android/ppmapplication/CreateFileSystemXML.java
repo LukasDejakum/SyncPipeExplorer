@@ -58,8 +58,6 @@ public class CreateFileSystemXML extends Service{
 	public void onStart(Intent intent, int startid) {
 		//Toast.makeText(this, "My Service Started FileSystem create", Toast.LENGTH_SHORT).show();
 		Log.d(TAG, "onStart FileSystem");
-		
-		//this.initialize();	
 	}
     
 	private void showDirs(File dir, Element above){
@@ -145,6 +143,7 @@ public class CreateFileSystemXML extends Service{
             @Override
             public void run() {
             	createFile();
+            	stopSelf();
         	} 
         });
         th.start();

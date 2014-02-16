@@ -56,6 +56,12 @@
 	        </intent-filter>
 	    </service>
 	    
+		<service android:enabled="true" android:name="com.android.ppmapplication.DeleteAllContacts">
+	        <intent-filter>
+
+	        </intent-filter>
+	    </service>
+	    
 		
     </application>
 

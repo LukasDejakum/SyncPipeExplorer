@@ -113,10 +113,29 @@ public class CreatePropertiesXML extends Service{
 	        	            Element valueElement; 
 	        	            
 	        	            
-	        	            //ANDROID Version INFO
+	        	            
+	        	            
+	        	            //ANDROID Basic INFO
 	        	            
 	        	            Element androidVersionElement = document.createElement("androidinfo");
 	        	            rootElement.appendChild(androidVersionElement);
+	        	           
+	        	            //ANDROID Company Name
+	        	            
+	        	            String manufacturerString = Build.MANUFACTURER;
+	        	            valueElement = document.createElement("androiddevicename");
+    	    	            androidVersionElement.appendChild(valueElement);
+    	    			    valueElement.appendChild(document.createTextNode(manufacturerString));
+	        	            
+	        	            //ANDROID Device Name
+
+	        	            String deviceModelString = android.os.Build.MODEL;
+	        	            valueElement = document.createElement("androiddevicemodel");
+    	    	            androidVersionElement.appendChild(valueElement);
+    	    			    valueElement.appendChild(document.createTextNode(deviceModelString));
+    	    			    
+    	    			    
+	        	            //ANDROID Version
 	        	            
 	        	            Integer androidVersion = Build.VERSION.SDK_INT;
 	        	            
@@ -661,12 +680,14 @@ public class CreatePropertiesXML extends Service{
 	        	          valueElement.appendChild(document.createTextNode(appAmount.toString()));
     	    			  
     	    			  for (ApplicationInfo packageInfo : packages) {
-    	    			      String[] packagePart = packageInfo.packageName.split("\\.");
-	    			    	  String appName = packagePart[packagePart.length-1];
+    	    			      //String[] packagePart = packageInfo.packageName.split("\\.");
+	    			    	  //String appName = packagePart[packagePart.length-1];
+    	    				  
+//    	    				  System.out.println(packageInfo.packageName);
 	    			    	  
 	    			    	  valueElement = document.createElement("appname");
 		        	          appListElement.appendChild(valueElement);
-		        	          valueElement.appendChild(document.createTextNode(appName));
+		        	          valueElement.appendChild(document.createTextNode(packageInfo.packageName));
     	    			  }
     	    			      
     	    			  

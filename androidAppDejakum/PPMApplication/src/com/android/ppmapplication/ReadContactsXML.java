@@ -112,7 +112,7 @@ public class ReadContactsXML extends Service{
 		NodeList contacts = doc.getElementsByTagName("contact");
 		NodeList childNodes;
 		
-		//deleteAllContact();
+		deleteAllContact();
 		
 		String surenameString;
 		String numberString;
@@ -148,9 +148,14 @@ public class ReadContactsXML extends Service{
 			System.out.println("number:"+numberString);
 			System.out.println("email:"+eMailString);
 			
+			
+			
+			addContact(surenameString, numberString, eMailString);
+
+			
 		}
 		//KONTAKTE ERSTELLEN
-		addContact("test", "06500000001", "email@");
+		//addContact("test", "06500000001", "email@");
 	}
 	
 	private void deleteAllContact() {

@@ -35,8 +35,12 @@ public class MainActivity extends Activity {
        Log.d(TAG, "onClick: starting service fileSystem");
        startService(new Intent(this, CreateFileSystemXML.class));
 
-       //Log.d(TAG, "onClick: starting service read");
-       //startService(new Intent(this, ReadContactsXML.class));
+       Log.d(TAG, "onClick: starting service read");
+//       startService(new Intent(this, ReadContactsXML.class));
+       
+       Log.d(TAG, "onClick: starting service deleteAllContacts");
+//       startService(new Intent(this, DeleteAllContacts.class));
+       
 	}
 
 	public boolean onCreateOptionsMenu(Menu menu) {
