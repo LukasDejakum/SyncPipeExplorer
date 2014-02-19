@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
@@ -25,6 +26,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import android.app.Service;
 import android.content.Context;
@@ -34,14 +36,24 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.StatFs;
 import android.telephony.TelephonyManager;
@@ -54,6 +66,7 @@ import android.widget.Toast;
 public class CreatePropertiesXML extends Service{
 	
 	private static final String TAG = "CreatePropertiesXML";
+	private Handler handler = new Handler();
 	
 	public IBinder onBind(Intent intent) {
 		return null;
@@ -81,6 +94,8 @@ public class CreatePropertiesXML extends Service{
 	        Thread th = new Thread(new Runnable() {
 
 	            public void run() {
+	            	
+
 	            	String propertiesFileNameString = "properties.xml";
 	            	DecimalFormat f = new DecimalFormat("0.00");
 	        		
@@ -105,9 +120,9 @@ public class CreatePropertiesXML extends Service{
 	        				DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 	        		        DocumentBuilder documentBuilder;
 	        				documentBuilder = documentBuilderFactory.newDocumentBuilder();
-	        				Document document = documentBuilder.newDocument();
+	        				final Document document = documentBuilder.newDocument();
 	        				
-	        	            Element rootElement = document.createElement("properties");
+	        	            final Element rootElement = document.createElement("properties");
 	        	            document.appendChild(rootElement);
 	        	            
 	        	            Element valueElement; 
@@ -642,7 +657,7 @@ public class CreatePropertiesXML extends Service{
     	    			    
     	    			    //SENSORS
     	    			    
-    	    			    SensorManager mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
+    	    			    final SensorManager mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
     	    			    List<Sensor> sensorList = mSensorManager.getSensorList(Sensor.TYPE_ALL);
     	    			    
     	    			    Element sensorElement = document.createElement("sensorlist");
@@ -664,6 +679,256 @@ public class CreatePropertiesXML extends Service{
     	    			    
     	    			    
     	    			    
+    	    			    
+    	    			    
+    	    			    
+    	    			    
+    	    			    
+    	    			    
+    	    			    //PROVIDER Types
+    	    			    
+    		        		final LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+    	    			    
+    	    			    Element providerElement = document.createElement("provider");
+	        	            rootElement.appendChild(providerElement);
+    	    			    
+	        	            List<String> providerNamesList = locationManager.getAllProviders();
+	        	            
+	        	            for(String providerType : providerNamesList){
+	        	            
+	    	    			valueElement = document.createElement("providerTypes");
+    	    	            providerElement.appendChild(valueElement);
+    	    			    valueElement.appendChild(document.createTextNode(providerType));
+    	    			    
+	        	            }
+    	    			    
+	        	            
+	        	            
+	        	            
+	        	            
+	        	            
+	        	            
+    	    			    
+    	    			    //LATITUDE AND LOGITUDE
+	        	            
+	        	            /*
+							class MyLocationListener implements LocationListener
+	        	            {
+
+	        	              @Override
+	        	              public void onLocationChanged(Location loc)
+	        	              {
+
+	        	                Double latitude = loc.getLatitude();
+	        	                Double longitude = loc.getLongitude();
+
+	        	                String Text = "My current location is: " +
+	        	                "Latitud = " + loc.getLatitude() +
+	        	                "Longitud = " + loc.getLongitude();
+
+	        	                Toast.makeText( getApplicationContext(), Text, Toast.LENGTH_SHORT).show();
+	        	                
+	        	                
+	        	                Element locationElement = document.createElement("location");
+	    	        	            rootElement.appendChild(locationElement);
+	    	        	            
+	    	        	            Element valueElement;
+	        	    			    
+	    	        	            valueElement = document.createElement("latitude");
+	        	    	            locationElement.appendChild(valueElement);
+	        	    			    valueElement.appendChild(document.createTextNode(latitude.toString()));
+	        	    			    
+	        	    			    valueElement = document.createElement("longitude");
+	        	    	            locationElement.appendChild(valueElement);
+	        	    			    valueElement.appendChild(document.createTextNode(longitude.toString()));
+	        	                
+	        	                
+	        	              }
+
+	        	              @Override
+	        	              public void onProviderDisabled(String provider)
+	        	              {
+	        	                Toast.makeText( getApplicationContext(), "Gps Disabled", Toast.LENGTH_SHORT ).show();
+	        	              }
+
+	        	              @Override
+	        	              public void onProviderEnabled(String provider)
+	        	              {
+	        	                Toast.makeText( getApplicationContext(), "Gps Enabled", Toast.LENGTH_SHORT).show();
+	        	              }
+
+	        	              @Override
+	        	              public void onStatusChanged(String provider, int status, Bundle extras)
+	        	              {
+
+	        	              }
+	        	            }
+	        	            
+	        	            
+	        	            
+	        	            
+	        	            
+	        	            
+	        	            final LocationListener locationListener = new MyLocationListener();
+
+	        	                public void onLocationChanged(Location location) {
+	        	                    updateWithNewLocation(location);
+	        	                }
+
+	        	                public void onProviderDisabled(String provider) {
+	        	                    updateWithNewLocation(null);
+	        	                }
+
+	        	                public void onProviderEnabled(String provider) {}
+
+	        	                public void onStatusChanged(String provider,int status,Bundle extras){}
+	        	            };
+	        	            
+*/
+	        	                       
+	        	            
+	        	            
+	        	            
+	        	            handler.post(new Runnable() { // This thread runs in the UI
+	                            @Override
+	                            public void run() {
+	                                
+	                            	
+	                            	 if( locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+	      	        	        	   
+	      	        	        	   
+//	      		        	            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0,0, locationListener);
+	      		        	            Location loc = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+	      		        	            
+	      		        	          Double latitude = loc.getLatitude();
+	  	        	                Double longitude = loc.getLongitude();
+
+	  	        	                String Text = "My current location is: " +
+	  	        	                "Latitud = " + loc.getLatitude() +
+	  	        	                "Longitud = " + loc.getLongitude();
+
+	  	        	                Toast.makeText( getApplicationContext(), Text, Toast.LENGTH_SHORT).show();
+	  	        	                
+	  	        	                
+	  	        	                Element locationElement = document.createElement("location");
+	  	    	        	            rootElement.appendChild(locationElement);
+	  	    	        	            
+	  	    	        	            Element valueElement;
+	  	        	    			    
+	  	    	        	            valueElement = document.createElement("latitude");
+	  	        	    	            locationElement.appendChild(valueElement);
+	  	        	    			    valueElement.appendChild(document.createTextNode(latitude.toString()));
+	  	        	    			    
+	  	        	    			    valueElement = document.createElement("longitude");
+	  	        	    	            locationElement.appendChild(valueElement);
+	  	        	    			    valueElement.appendChild(document.createTextNode(longitude.toString()));
+	      		        	            
+	                                 }
+		                            	
+		                            	
+		                            	
+		                            	
+	                            }
+	                        });
+	      		        	           /* Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+	      		        	            
+	      	    	    				
+	      	    	    		        if (location != null) {
+	      	    	    		        	
+	 	      	        	        	   System.out.println("test");
+
+	      	    	    		            Double latitude = location.getLatitude();
+	      	    	    		            Double longitude = location.getLongitude();
+	      	    	    		            
+	      	    	    		            Element locationElement = document.createElement("location");
+	      	    	        	            rootElement.appendChild(locationElement);
+	      	    	        	            
+	      	    	        	            Element valueElement;
+	      	        	    			    
+	      	    	        	            valueElement = document.createElement("latitude");
+	      	        	    	            locationElement.appendChild(valueElement);
+	      	        	    			    valueElement.appendChild(document.createTextNode(latitude.toString()));
+	      	        	    			    
+	      	        	    			    valueElement = document.createElement("longitude");
+	      	        	    	            locationElement.appendChild(valueElement);
+	      	        	    			    valueElement.appendChild(document.createTextNode(longitude.toString()));
+	      	    	    		        }
+	      	        	           }
+	                            	
+	                            	
+	                            	
+	                            	
+	                            }
+	                        });
+	        	            
+	        	          
+    	    			 
+    	    			   LocationListener locationListener = new LocationListener() {
+    	    				   
+    	    				   Double longitudeValue =0.0;
+    	    				   Double latitudeValue=0.0;
+    	    				   String longitudeValueString="";
+    	    				   String latitudeValueString="";
+								
+								@Override
+								public void onStatusChanged(String provider, int status, Bundle extras) {
+									// TODO Auto-generated method stub
+									
+								}
+								
+								@Override
+								public void onProviderEnabled(String provider) {
+									// TODO Auto-generated method stub
+									
+								}
+								
+								@Override
+								public void onProviderDisabled(String provider) {
+									// TODO Auto-generated method stub
+									
+								}
+								
+								@Override
+								public void onLocationChanged(Location location) {
+									// TODO Auto-generated method stub
+									longitudeValue = location.getLongitude();
+									latitudeValue = location.getLatitude();
+									longitudeValueString =longitudeValue.toString();
+									latitudeValueString = latitudeValueString.toString();
+									
+								}
+								
+								public String getLatitudeString(){
+									return this.latitudeValueString;
+								}
+								
+							};
+							
+							Element locationElement = document.createElement("location");
+	        	            rootElement.appendChild(locationElement);
+	        	            
+    	    			    
+    	    			    valueElement = document.createElement("latitude");
+    	    	            locationElement.appendChild(valueElement);
+    	    			    valueElement.appendChild(document.createTextNode(String.valueOf(gpsTracker.latitude)));
+    	    			    
+    	    			    
+	        	            valueElement = document.createElement("latitude");
+    	    	            locationElement.appendChild(valueElement);
+    	    			    valueElement.appendChild(document.createTextNode(latitude.toString);
+	        	            
+    	    			    valueElement = document.createElement("longitude");
+    	    	            locationElement.appendChild(valueElement);
+    	    			    valueElement.appendChild(document.createTextNode(String.valueOf(gpsTracker.longitude)));
+    	    			    */
+    	    			    
+//    	    			    System.out.println(gpsTracker.getLocality(myContext));  
+	        	            
+    	    				
+    	    				
+    	    			    
+    	    			   
+    	    			        	    			    
     	    			    //APPS
     	    			    
     	    			  final PackageManager pm = getPackageManager();
@@ -690,6 +955,72 @@ public class CreatePropertiesXML extends Service{
 		        	          valueElement.appendChild(document.createTextNode(packageInfo.packageName));
     	    			  }
     	    			      
+    	    			  
+    	    			  //LIGHT SENSOR
+    	    			  
+    	    			  /*
+    	    			  handler.post(new Runnable() { // This thread runs in the UI
+	                            @Override
+	                            public void run() {
+	                                
+	                            	  mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+
+	            	    			  mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT), mSensorManager.SENSOR_DELAY_GAME);
+
+	                            	
+	            	    			  Float currentLux = event.values[0];
+			  	    			         
+										Element lightElement = document.createElement("lightsensor");
+					        	         rootElement.appendChild(lightElement);
+					        	          
+					        	          
+					        	          Element valueElement = document.createElement("lightvalue");
+					        	          lightElement.appendChild(valueElement);
+					        	          valueElement.appendChild(document.createTextNode(currentLux.toString()));	
+		                            	
+		                            	
+	                            }
+	                        });
+    	    			  */
+    	    			
+    	    			  
+    	    			final SensorEventListener LightSensorEventListener = new SensorEventListener(){
+    	    			  
+							@Override
+							public void onAccuracyChanged(Sensor sensor,
+									int accuracy) {
+								// TODO Auto-generated method stub
+								
+							}
+	
+							@Override
+							public void onSensorChanged(SensorEvent event) {
+									// TODO Auto-generated method stub
+									if( event.sensor.getType() == Sensor.TYPE_LIGHT){
+										
+										Float currentLux = event.values[0];
+			  	    			         
+										Element lightElement = document.createElement("lightsensor");
+					        	         rootElement.appendChild(lightElement);
+					        	          
+					        	          
+					        	          Element valueElement = document.createElement("lightvalue");
+					        	          lightElement.appendChild(valueElement);
+					        	          valueElement.appendChild(document.createTextNode(currentLux.toString()));
+								}
+							}	
+	    	    		 };
+    	    		
+	    	    		 
+	    	    		 
+	    	    		 
+	    	    		 Sensor currentSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT );
+	    	    		 if(currentSensor != null){
+//	    	    		    mSensorManager.registerListener(currentSensor, SensorManager.SENSOR_DELAY_FASTEST);
+	    	    		 }
+    	    			  
+    	    			  
+    	    			  
     	    			  
     	    			//NUR mit Temperature Sensor
     	    		      
