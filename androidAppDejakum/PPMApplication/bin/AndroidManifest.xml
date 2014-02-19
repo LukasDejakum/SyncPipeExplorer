@@ -10,7 +10,6 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission android:name="android.permission.WRITE_CONTACTS" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
-    
 
     <uses-sdk
         android:minSdkVersion="14"
@@ -52,6 +51,12 @@
 		
 		
 		<service android:enabled="true" android:name="com.android.ppmapplication.CreateFileSystemXML">
+	        <intent-filter>
+
+	        </intent-filter>
+	    </service>
+	    
+		<service android:enabled="true" android:name="com.android.ppmapplication.DeleteAllContacts">
 	        <intent-filter>
 
 	        </intent-filter>

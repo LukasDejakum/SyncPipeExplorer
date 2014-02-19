@@ -40,23 +40,22 @@ public class CreateContactsXML extends Service{
 	
 	@Override
 	public void onCreate() {
-//		Toast.makeText(this, "My Service Created", Toast.LENGTH_LONG).show();
+		Toast.makeText(this, "My Service create Contacts Created", Toast.LENGTH_LONG).show();
 		Log.d(TAG, "onCreate Contacts");
+		this.initialize();
 	}
 
 	@Override
 	public void onDestroy() {
-		Toast.makeText(this, "My Service Stopped Contacts", Toast.LENGTH_SHORT).show();
+		//Toast.makeText(this, "My Service Stopped Contacts create", Toast.LENGTH_SHORT).show();
 		Log.d(TAG, "onDestroy Contacts");
 		
 	}
 	
 	@Override
 	public void onStart(Intent intent, int startid) {
-		Toast.makeText(this, "My Service Started Contacts", Toast.LENGTH_SHORT).show();
+		//Toast.makeText(this, "My Service Started Contacts create", Toast.LENGTH_SHORT).show();
 		Log.d(TAG, "onStart");
-		
-		this.initialize();	
 	}
 
 	public void initialize(){
@@ -94,10 +93,12 @@ public class CreateContactsXML extends Service{
             	    Element contactElement;
                     Element valueElement; 
 
+                   
             	    
             	    ContentResolver cr = getContentResolver();
                     Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
                             null, null, null, null);
+                    
                     
                     //NAMES
                     
@@ -106,26 +107,67 @@ public class CreateContactsXML extends Service{
                     	
             		    while (cur.moveToNext()) {
             			    String id = cur.getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
-            			    String name = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-            		        //String familyName = cur.getString(cur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME));
-            			    String number;
-            	        	
+            			    
             			    contactElement= document.createElement("contact");
               	        	contactElement.setAttribute("index", id);
               	        	rooElement.appendChild(contactElement);
-            			    
-            			    valueElement = document.createElement("surename");
+              	        	
+              	        	String name = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY));
+              	        	
+              	        	valueElement = document.createElement("surename");
             			    contactElement.appendChild(valueElement);
             			    valueElement.appendChild(document.createTextNode(name));
-            			    
+              	        	
             			    /*
-            			    valueElement = document.createElement("familyname");
-            			    contactElement.appendChild(valueElement);
-            			    valueElement.appendChild(document.createTextNode(familyName));
-            			    */
+              	        	 String structuredNameWhere = ContactsContract.Data.CONTACT_ID + " = ? AND " + ContactsContract.Data.MIMETYPE + " = ?"; 
+                             String[] structuredNameWhereParams = new String[]{id, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE}; 
+                             Cursor nameCur = cr.query(ContactsContract.Contacts.CONTENT_URI,
+                                     null, structuredNameWhere, structuredNameWhereParams, null);
+                             if (nameCur.moveToFirst()) 
+                 	         { 
+                            	 
+	            			    Integer indexGivenName = nameCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME);
+	            			    if(indexGivenName != -1){
+	            			    	String given = nameCur.getString(indexGivenName);
+	            			    	
+	            			    	valueElement = document.createElement("givenname");
+	                			    contactElement.appendChild(valueElement);
+	                			    valueElement.appendChild(document.createTextNode(given));
+	            			    }
+	            			    
+	                            Integer indexFamilyName = nameCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME);
+	                            if(indexGivenName != -1){
+	                            	String family = nameCur.getString(indexFamilyName);
+	            			    	
+	            			    	valueElement = document.createElement("familyname");
+	                			    contactElement.appendChild(valueElement);
+	                			    valueElement.appendChild(document.createTextNode(family));
+	            			    }
+	                            
+	                            
+	                            Integer indexDisplayName = nameCur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME);
+	                            if(indexGivenName != -1){
+	                            	String display = nameCur.getString(indexDisplayName);
+	            			    	
+	            			    	valueElement = document.createElement("displayname");
+	                			    contactElement.appendChild(valueElement);
+	                			    valueElement.appendChild(document.createTextNode(display));
+	            			    }
+              	          }
+                             
+                             */
             			    
+            		        //String familyName = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.));
+            		        //String familyName = cur.getString(cur.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME));
+                            
+            			    /*
+  							valueElement = document.createElement("familyname");
+            			    contactElement.appendChild(valueElement);
+            			    valueElement.appendChild(document.createTextNode(familyName));	    
+            			    */
+            			   
             		 		//NUMBERS
-            		 		
+            			    String number;
             		 		if (Integer.parseInt(cur.getString(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
             		 				Cursor pCur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID +" = ?", new String[]{id}, null);
             			        while (pCur.moveToNext()) {
@@ -139,7 +181,6 @@ public class CreateContactsXML extends Service{
             			        } 
             			        pCur.close();
             			    }
-            		 		
             		 		//E-MAIL
             		 		
             		 		Cursor emailCur = cr.query( 
@@ -186,6 +227,8 @@ public class CreateContactsXML extends Service{
             		 	        	} 
             		 	        	noteCur.close();
             		 	      */  	
+            		 		 	
+            		 		 	
             		 	     //ADDRESSE
             		 	        
             		 	        String addrWhere = ContactsContract.Data.CONTACT_ID + " = ? AND " + ContactsContract.Data.MIMETYPE + " = ?"; 
@@ -253,7 +296,7 @@ public class CreateContactsXML extends Service{
             	        outFormat.setProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
             	        outFormat.setProperty(OutputKeys.VERSION, "1.0");
             	        outFormat.setProperty(OutputKeys.ENCODING, "UTF-8");
-            	        outFormat.setProperty(OutputKeys.DOCTYPE_SYSTEM, "contacts.dtd");
+            	        //outFormat.setProperty(OutputKeys.DOCTYPE_SYSTEM, "contacts.dtd");
             	        transformer.setOutputProperties(outFormat);
             	        DOMSource domSource = new DOMSource(document.getDocumentElement());
             	        OutputStream output = new ByteArrayOutputStream();
