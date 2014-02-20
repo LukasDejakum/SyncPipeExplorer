@@ -8,11 +8,15 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EventListener;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
+import javax.security.auth.PrivateCredentialPermission;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -28,6 +32,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import android.R.integer;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -38,6 +43,7 @@ import android.graphics.Point;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.hardware.SensorListener;
 import android.hardware.SensorManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -61,12 +67,15 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 public class CreatePropertiesXML extends Service{
 	
 	private static final String TAG = "CreatePropertiesXML";
 	private Handler handler = new Handler();
+	private static final CreatePropertiesXML service = new CreatePropertiesXML();
 	
 	public IBinder onBind(Intent intent) {
 		return null;
@@ -128,12 +137,21 @@ public class CreatePropertiesXML extends Service{
 	        	            Element valueElement; 
 	        	            
 	        	            
+	        	       
+	        			
+	        	        
+	        	        
+	        	        
+	        	        
+	        	        
 	        	            
 	        	            
 	        	            //ANDROID Basic INFO
 	        	            
 	        	            Element androidVersionElement = document.createElement("androidinfo");
 	        	            rootElement.appendChild(androidVersionElement);
+	        	            
+	        	            
 	        	           
 	        	            //ANDROID Company Name
 	        	            
@@ -655,6 +673,50 @@ public class CreatePropertiesXML extends Service{
     	    			    valueElement.appendChild(document.createTextNode(width.toString()+" x "+heigth.toString()));
     	    			    
     	    			    
+    	    			    
+    	    			    
+    	    			    //DISPLAY ROTATION
+   	    	    		 
+   	    	    		 
+   	    	    		 Display displayRotation = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay(); 
+   	    	    		 
+   	    	    		 System.out.println(displayRotation.getRotation());
+   	    	    		 
+   	    	    		 if(displayRotation.getRotation()==0||displayRotation.getRotation()==90){
+   	    	    			 
+   	    	    			valueElement = document.createElement("displayrotation");
+    	    	            displayElement.appendChild(valueElement);
+    	    			    valueElement.appendChild(document.createTextNode("portrait"));
+   	    	    			 
+   	    	    		 }
+   	    	    		 
+   	    	    		 
+   	    	    		                        																																																																																																																																																																												
+    	    			    
+   	    	    		 else {
+   	    	    			valueElement = document.createElement("displayrotation");
+    	    	            displayElement.appendChild(valueElement);
+    	    			    valueElement.appendChild(document.createTextNode("landscape"));
+    	    			    
+						}
+    	    			    
+    	    			    
+    	    			    
+    	    			    
+    	    			    
+    	    			    
+    	    			    
+    	    			    
+    	    			    
+    	    			    
+    	    			    
+    	    			    
+    	    			    
+    	    			    
+    	    			    
+    	    			    
+    	    			    
+    	    			    
     	    			    //SENSORS
     	    			    
     	    			    final SensorManager mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
@@ -710,6 +772,7 @@ public class CreatePropertiesXML extends Service{
 	        	            
     	    			    
     	    			    //LATITUDE AND LOGITUDE
+	        	           
 	        	            
 	        	            /*
 							class MyLocationListener implements LocationListener
@@ -787,7 +850,7 @@ public class CreatePropertiesXML extends Service{
 */
 	        	                       
 	        	            
-	        	            
+	        	      
 	        	            
 	        	            handler.post(new Runnable() { // This thread runs in the UI
 	                            @Override
@@ -800,7 +863,7 @@ public class CreatePropertiesXML extends Service{
 //	      		        	            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0,0, locationListener);
 	      		        	            Location loc = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 	      		        	            
-	      		        	          Double latitude = loc.getLatitude();
+	      		        	        Double latitude = loc.getLatitude();
 	  	        	                Double longitude = loc.getLongitude();
 
 	  	        	                String Text = "My current location is: " +
@@ -830,6 +893,8 @@ public class CreatePropertiesXML extends Service{
 		                            	
 	                            }
 	                        });
+	        	            
+	        	            
 	      		        	           /* Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 	      		        	            
 	      	    	    				
@@ -945,6 +1010,7 @@ public class CreatePropertiesXML extends Service{
 	        	          valueElement.appendChild(document.createTextNode(appAmount.toString()));
     	    			  
     	    			  for (ApplicationInfo packageInfo : packages) {
+    	    				  
     	    			      //String[] packagePart = packageInfo.packageName.split("\\.");
 	    			    	  //String appName = packagePart[packagePart.length-1];
     	    				  
@@ -956,7 +1022,33 @@ public class CreatePropertiesXML extends Service{
     	    			  }
     	    			      
     	    			  
+    	    			  
+    	    			  
+    	    			  
+    	    			  
+    	    			  
+    	    			  
+    	    			  
+    	    			  
+    	    			  
+    	    			  
+    	    			  
     	    			  //LIGHT SENSOR
+    	    			  
+    	    			  
+    	    			  
+    	    			  
+    	    			  
+    	    			  
+    	    			  
+    	    			  
+    	    			  
+    	    			  
+    	    			  
+    	    			  
+    	    			  
+    	    			  
+    	    			  
     	    			  
     	    			  /*
     	    			  handler.post(new Runnable() { // This thread runs in the UI
@@ -984,45 +1076,145 @@ public class CreatePropertiesXML extends Service{
     	    			  */
     	    			
     	    			  
-    	    			final SensorEventListener LightSensorEventListener = new SensorEventListener(){
-    	    			  
-							@Override
-							public void onAccuracyChanged(Sensor sensor,
-									int accuracy) {
-								// TODO Auto-generated method stub
-								
-							}
-	
-							@Override
-							public void onSensorChanged(SensorEvent event) {
-									// TODO Auto-generated method stub
-									if( event.sensor.getType() == Sensor.TYPE_LIGHT){
-										
-										Float currentLux = event.values[0];
-			  	    			         
-										Element lightElement = document.createElement("lightsensor");
-					        	         rootElement.appendChild(lightElement);
-					        	          
-					        	          
-					        	          Element valueElement = document.createElement("lightvalue");
-					        	          lightElement.appendChild(valueElement);
-					        	          valueElement.appendChild(document.createTextNode(currentLux.toString()));
-								}
-							}	
-	    	    		 };
-    	    		
-	    	    		 
+    	    			
 	    	    		 
 	    	    		 
 	    	    		 Sensor currentSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT );
+	    	    		 
 	    	    		 if(currentSensor != null){
-//	    	    		 ÊÊÊmSensorManager.registerListener(currentSensor, SensorManager.SENSOR_DELAY_FASTEST);
+	    	    			 
+	    	    			 				SensorEventListener lightSensorEventListener = new SensorEventListener(){
+		                            		
+	    	    			 					private boolean returnValue=true;
+	    	    			 					
+		            							@Override
+		            							public void onAccuracyChanged(Sensor sensor,int accuracy) {
+		            								// TODO Auto-generated method stub
+		            								
+		            							}
+		            							
+		            							@Override
+		            							public void onSensorChanged(SensorEvent event) {
+		            									// TODO Auto-generated method stub
+			            								if( event.sensor.getType() == Sensor.TYPE_LIGHT&&returnValue){
+			            										
+			            										Float currentLux = event.values[0];
+			            			  	    			         
+			            										Element lightElement = document.createElement("lightsensor");
+			            					        	        rootElement.appendChild(lightElement);
+			            					        	          
+			            					        	        Element valueElement = document.createElement("lightvalue");
+			            					        	        lightElement.appendChild(valueElement);
+			            					        	        valueElement.appendChild(document.createTextNode(currentLux.toString()));
+			            					        	          
+			            					        	        String Text = currentLux.toString();
+			            					  	        	              
+			            					  	        	    Toast.makeText( getApplicationContext(), Text, Toast.LENGTH_SHORT).show();
+			            					  	        	
+			            					  	        	    System.out.println(Text);
+			            					  	        	    
+			            					  	        	    returnValue=false;
+			            								}
+
+		            							}
+		            							
+		                	    			};
+		                          
+			         	    			mSensorManager.registerListener(lightSensorEventListener, mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT), mSensorManager.SENSOR_DELAY_GAME);
+		            	    			
+			         	    			try
+		                                {
+		                                      Thread.sleep(1000);
+		                                }
+		                                catch(Exception e){}
+		            	    			
+		            	    			mSensorManager.unregisterListener(lightSensorEventListener);
+		                            	
+		                            	
+	    	    			 
 	    	    		 }
+	    	    		 
+	    	    		 
+	    	    		 
+	    	    		 
+	    	    		 
+	    	    		 
+	    	    		 
+	    	    		 currentSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT );
+	    	    		 
+	    	    		 if(currentSensor != null){
+	    	    		 
+	    	    		 
+	    	    			 SensorEventListener axisSensorEventListener = new SensorEventListener() {
+	    	    				 
+	    	    			    public void onSensorChanged(SensorEvent e) {
+									// TODO Auto-generated method stub
+
+	    	    			        if (e.sensor.getType()==Sensor.TYPE_ACCELEROMETER) {
+	    	    			        	
+	    	    			        	double xAxis = 0;
+	    	    			            double yAxis = 0;
+	    	    			            double zAxis = 0;
+	    	    			            double xThreshold = 0;
+	    	    			            double yThreshold = 0;
+	    	    			            double zThreshold = 0;
+	    	    			        
+	    	    			            xAxis = e.values[0];
+	    	    			            yAxis = e.values[1];
+	    	    			            zAxis = e.values[2];
+	    	    			            
+	    	    			            System.out.println(xAxis);
+
+
+	    	    			           /* if (xThreshold > xAxis || yThreshold > yAxis || zThreshold > zAxis) {
+	    	    			                alertUser(values);
+	    	    			            }
+	    	    			            else {
+	    	    			                nonAlert(values);
+	    	    			            }*/
+	    	    			        }
+	    	    			    }
+
+								@Override
+								public void onAccuracyChanged(Sensor sensor,
+										int accuracy) {
+									// TODO Auto-generated method stub
+									
+								}
+	    	    			};
+	    	    			
+	    	    			mSensorManager.registerListener(axisSensorEventListener, mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT), mSensorManager.SENSOR_DELAY_GAME);
+        	    			
+         	    			try
+                            {
+                                  Thread.sleep(1000);
+                            }
+                            catch(Exception e){}
+        	    			
+        	    			mSensorManager.unregisterListener(axisSensorEventListener);
+	    	    			
+	    	    			
+	    	    		 }
+	    	    		 
+	    	    		 
+	    	    		 
+	    	    		 
+	    	    		 
+	    	    		 
+	    	    		
+	    	    		 
+	    	    		 
+	    	    		 
+	    	    		 
+	    	    		 
+	    	    		 
+	    	    		 
+	    	    		 
+	    	    		 
+	    	    		 
     	    			  
     	    			  
-    	    			  
-    	    			  
-    	    			//NUR mit Temperature Sensor
+    	    			//NUR mit TEMPERATUR SENSOR
     	    		      
     	    			  /*  private final SensorEventListener TemperatureSensorListener
     	    			     = new SensorEventListener(){
@@ -1106,6 +1298,8 @@ public class CreatePropertiesXML extends Service{
 	        th.start();
 	        
 	    }
+	 
+
 	 private Integer getMaxCPUFreqMHz() {
 
 		    int maxFreq = -1;

@@ -41,6 +41,9 @@ public class MainActivity extends Activity {
        Log.d(TAG, "onClick: starting service deleteAllContacts");
 //       startService(new Intent(this, DeleteAllContacts.class));
        
+//       Log.d(TAG, "onClick: starting service readPropertiesXML");
+//       startService(new Intent(this, ReadPropertiesXML.class));
+       
 	}
 
 	public boolean onCreateOptionsMenu(Menu menu) {
