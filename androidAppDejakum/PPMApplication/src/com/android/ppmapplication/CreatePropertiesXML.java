@@ -420,92 +420,92 @@ public class CreatePropertiesXML extends Service{
 	        	    	    
 	        	    	 //NUR JeallyBean
 	        	    	    
-	        	    	 /*
-	        	    	  if(androidVersion >= 16){
-	        	    		  //this code will be executed on devices running on DONUT (NOT ICS) or later
-	        	    	  
-		        	    	   stringToWrite=stringToWrite+"Signal Strength \n";
-		        	    	   
-		        	    	   valueElement = document.createElement("mobiesignal");
-		        			   mobileSignalElement.appendChild(valueElement);
-		        	    	   valueElement.appendChild(document.createTextNode("LTE (4G) (10000+ Kbps)"));
-		        	    	   
-		        	    	   
-		        	    	    TelephonyManager telephonyManager = (TelephonyManager)this.getSystemService(Context.TELEPHONY_SERVICE);
-		        	    	 // for example value of first element
-		        	    	 CellInfoGsm cellinfogsm = (CellInfoGsm)telephonyManager.getAllCellInfo().get(0);
-		        	    	 CellSignalStrengthGsm cellSignalStrengthGsm = cellinfogsm.getCellSignalStrength();
-		        	    	 cellSignalStrengthGsm.getDbm();	
-		        			
-		        	    	    
-		        	    	 
-		        	    	    int strengthAmplitude = MyPhoneStateListener.getStrength();
-		        	    	    
-		        	    	    //do something with it (in this case we update a text view)
-		        	    	    stringToWrite=stringToWrite+"signal strength"+String.valueOf(strengthAmplitude);		
-		        	    		
-		        	    	    ContentResolver cr = getContentResolver();
-		        	            Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
-		        	                    null, null, null, null);
-		        	            if (cur.getCount() > 0) {
-		        	    		    while (cur.moveToNext()) {
-		        	    		        String id = cur.getString(
-		        	    	                        cur.getColumnIndex(ContactsContract.Contacts._ID));
-		        	    			String name = cur.getString(
-		        	    	                        cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-		        	    		 		if (Integer.parseInt(cur.getString(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
-		        	    		 		    //Query phone here.  Covered next
-		        	    		 	    }
-		        	    	        }
-		        	            }
-	        	            }
-	        	    	   	   
-	        	    	   	   
-	        	            
-	        	    	     class MyPhoneStateListener extends PhoneStateListener {
-	        	    	        String gsmStrength = "";
-
-	        	    	        @Override
-	        	    	        public void onSignalStrengthsChanged(SignalStrength signalStrength) {
-	        	    	            super.onSignalStrengthsChanged(signalStrength);
-	        	    	            gsmStrength = String.valueOf(signalStrength.getGsmSignalStrength()* 2 - 113);           
-	        	    	        }
-
-	        	    	        public String getStrength() {
-	        	    	            return gsmStrength;
-	        	    	        }
-
-	        	    	        }
+//	        	    	
+//	        	    	  if(androidVersion >= 16){
+//	        	    		  //this code will be executed on devices running on DONUT (NOT ICS) or later
+//	        	    	  
+//		        	    	   stringToWrite=stringToWrite+"Signal Strength \n";
+//		        	    	   
+//		        	    	   valueElement = document.createElement("mobiesignal");
+//		        			   mobileSignalElement.appendChild(valueElement);
+//		        	    	   valueElement.appendChild(document.createTextNode("LTE (4G) (10000+ Kbps)"));
+//		        	    	   
+//		        	    	   
+//		        	    	    TelephonyManager telephonyManager = (TelephonyManager)this.getSystemService(Context.TELEPHONY_SERVICE);
+//		        	    	 // for example value of first element
+//		        	    	 CellInfoGsm cellinfogsm = (CellInfoGsm)telephonyManager.getAllCellInfo().get(0);
+//		        	    	 CellSignalStrengthGsm cellSignalStrengthGsm = cellinfogsm.getCellSignalStrength();
+//		        	    	 cellSignalStrengthGsm.getDbm();	
+//		        			
+//		        	    	    
+//		        	    	 
+//		        	    	    int strengthAmplitude = MyPhoneStateListener.getStrength();
+//		        	    	    
+//		        	    	    //do something with it (in this case we update a text view)
+//		        	    	    stringToWrite=stringToWrite+"signal strength"+String.valueOf(strengthAmplitude);		
+//		        	    		
+//		        	    	    ContentResolver cr = getContentResolver();
+//		        	            Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
+//		        	                    null, null, null, null);
+//		        	            if (cur.getCount() > 0) {
+//		        	    		    while (cur.moveToNext()) {
+//		        	    		        String id = cur.getString(
+//		        	    	                        cur.getColumnIndex(ContactsContract.Contacts._ID));
+//		        	    			String name = cur.getString(
+//		        	    	                        cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+//		        	    		 		if (Integer.parseInt(cur.getString(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
+//		        	    		 		    //Query phone here.  Covered next
+//		        	    		 	    }
+//		        	    	        }
+//		        	            }
+//	        	            }
+//	        	    	   	   
+//	        	    	   	   
+//	        	            
+//	        	    	     class MyPhoneStateListener extends PhoneStateListener {
+//	        	    	        String gsmStrength = "";
+//
+//	        	    	        @Override
+//	        	    	        public void onSignalStrengthsChanged(SignalStrength signalStrength) {
+//	        	    	            super.onSignalStrengthsChanged(signalStrength);
+//	        	    	            gsmStrength = String.valueOf(signalStrength.getGsmSignalStrength()* 2 - 113);           
+//	        	    	        }
+//
+//	        	    	        public String getStrength() {
+//	        	    	            return gsmStrength;
+//	        	    	        }
+//
+//	        	    	        }
 	        	    	    
-	        	    	    /*
+	        	    	    
 	        	    	    
 	        	    	    
 	        	    	    
 	        	    	    //NUR Galaxy S4
 	        	    	    
-	        	    	    /*Sensor TemperatureSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_TEMPERATURE);
-	        	    	     if(TemperatureSensor != null){
-	        	    		        Log.i(TAG, "Sensor.TYPE_TEMPERATURE Available");
-	        	    	      mSensorManager.registerListener(
-	        	    	        TemperatureSensorListener, 
-	        	    	        TemperatureSensor, 
-	        	    	        SensorManager.SENSOR_DELAY_NORMAL);
-	        	    	      
-	        	    	     }else{
-	        	    		        Log.i(TAG, "Sensor.TYPE_TEMPERATURE NOT Available");
-	        	    	     }
-	        	    	     
-	        	    	     Sensor AmbientTemperatureSensor 
-	        	    	      = mSensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
-	        	    	     if(AmbientTemperatureSensor != null){
-	        	    		        Log.i(TAG, "Sensor.TYPE_AMBIENT_TEMPERATURE Available");
-	        	    	      mSensorManager.registerListener(
-	        	    	        AmbientTemperatureSensorListener, 
-	        	    	        AmbientTemperatureSensor, 
-	        	    	        SensorManager.SENSOR_DELAY_NORMAL);
-	        	    	     }else{
-	        	    		        Log.i(TAG, "Sensor.TYPE_AMBIENT_TEMPERATURE NOT Available");
-	        	    	     }*/
+//	        	    	    Sensor TemperatureSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_TEMPERATURE);
+//	        	    	     if(TemperatureSensor != null){
+//	        	    		        Log.i(TAG, "Sensor.TYPE_TEMPERATURE Available");
+//	        	    	      mSensorManager.registerListener(
+//	        	    	        TemperatureSensorListener, 
+//	        	    	        TemperatureSensor, 
+//	        	    	        SensorManager.SENSOR_DELAY_NORMAL);
+//	        	    	      
+//	        	    	     }else{
+//	        	    		        Log.i(TAG, "Sensor.TYPE_TEMPERATURE NOT Available");
+//	        	    	     }
+//	        	    	     
+//	        	    	     Sensor AmbientTemperatureSensor 
+//	        	    	      = mSensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
+//	        	    	     if(AmbientTemperatureSensor != null){
+//	        	    		        Log.i(TAG, "Sensor.TYPE_AMBIENT_TEMPERATURE Available");
+//	        	    	      mSensorManager.registerListener(
+//	        	    	        AmbientTemperatureSensorListener, 
+//	        	    	        AmbientTemperatureSensor, 
+//	        	    	        SensorManager.SENSOR_DELAY_NORMAL);
+//	        	    	     }else{
+//	        	    		        Log.i(TAG, "Sensor.TYPE_AMBIENT_TEMPERATURE NOT Available");
+//	        	    	     }
 
 	        	    	    
 	        	    	    
@@ -1294,10 +1294,10 @@ public class CreatePropertiesXML extends Service{
 	    	    		 
 	    	    			 SensorEventListener axisSensorEventListener = new SensorEventListener() {
 	    	    				 
-	    	    			    public void onSensorChanged(SensorEvent e) {
+	    	    			    public void onSensorChanged(SensorEvent event) {
 									// TODO Auto-generated method stub
 
-	    	    			        if (e.sensor.getType()==Sensor.TYPE_ACCELEROMETER) {
+	    	    			        if (event.sensor.getType()==Sensor.TYPE_ACCELEROMETER) {
 	    	    			        	
 	    	    			        	double zAxis = 0;
 	    	    			        	double xAxis = 0;
@@ -1307,13 +1307,13 @@ public class CreatePropertiesXML extends Service{
 //	    	    			            double yThreshold = 0;
 //	    	    			            double zThreshold = 0;
 	    	    			        
-	    	    			        	yAxis = e.values[0];
-	    	    			        	xAxis = e.values[1];
-	    	    			            zAxis = e.values[2];
+	    	    			        	yAxis = event.values[0];
+	    	    			        	xAxis = event.values[1];
+	    	    			            zAxis = event.values[2];
 	    	    			            
-//	    	    			            System.out.println("xAxis: "+xAxis);
-//	    	    			            System.out.println("yAxis: "+yAxis);
-//	    	    			            System.out.println("zAxix: "+zAxis);
+	    	    			            System.out.println("xAxis: "+xAxis);
+	    	    			            System.out.println("yAxis: "+yAxis);
+	    	    			            System.out.println("zAxix: "+zAxis);
 	    	    			            
 	    	    			            
 
